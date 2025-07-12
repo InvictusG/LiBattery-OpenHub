@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "data-sync": "node scripts/sync-github-data.js"
+    "data-sync": "node scripts/sync-github-data.js",
+    "sync-data": "node scripts/sync-github-data.js",
+    "setup": "scripts/setup.bat",
+    "github-setup": "scripts/github-setup.bat"
   },
   "dependencies": {
     "next": "^14.0.0",

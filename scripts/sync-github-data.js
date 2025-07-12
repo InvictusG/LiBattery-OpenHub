@@ -228,13 +228,13 @@ async function saveRepository(repo) {
         spdx_id: repo.license.spdx_id,
         url: repo.license.url,
       } : null,
-      owner: {
+      owner: repo.owner ? {
         login: repo.owner.login,
         id: repo.owner.id,
         avatar_url: repo.owner.avatar_url,
         html_url: repo.owner.html_url,
         type: repo.owner.type,
-      },
+      } : null,
       created_at: repo.created_at,
       updated_at: repo.updated_at,
       pushed_at: repo.pushed_at,

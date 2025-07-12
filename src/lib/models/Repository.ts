@@ -1,7 +1,49 @@
 import mongoose, { Document, Schema } from 'mongoose'
-import { Repository as IRepository, BatteryCategory } from '@/types'
+import { BatteryCategory } from '@/types'
 
-export interface RepositoryDocument extends Omit<IRepository, '_id'>, Document {}
+export interface RepositoryDocument extends Document {
+  id: number
+  name: string
+  full_name: string
+  description: string | null
+  html_url: string
+  clone_url: string
+  ssh_url: string
+  homepage: string | null
+  language: string | null
+  topics: string[]
+  stargazers_count: number
+  watchers_count: number
+  forks_count: number
+  open_issues_count: number
+  size: number
+  license: {
+    key: string
+    name: string
+    spdx_id: string
+    url: string
+  } | null
+  owner: {
+    login: string
+    id: number
+    avatar_url: string
+    html_url: string
+    type: string
+  } | null
+  created_at: string
+  updated_at: string
+  pushed_at: string
+  archived: boolean
+  disabled: boolean
+  visibility: string
+  default_branch: string
+  category: BatteryCategory
+  tags: string[]
+  featured: boolean
+  ai_summary?: string
+  relevance_score?: number
+  last_synced: string
+}
 
 const repositorySchema = new Schema<RepositoryDocument>(
   {
@@ -27,11 +69,11 @@ const repositorySchema = new Schema<RepositoryDocument>(
       url: { type: String, default: null },
     },
     owner: {
-      login: { type: String, required: true },
-      id: { type: Number, required: true },
-      avatar_url: { type: String, required: true },
-      html_url: { type: String, required: true },
-      type: { type: String, required: true },
+      login: { type: String },
+      id: { type: Number },
+      avatar_url: { type: String },
+      html_url: { type: String },
+      type: { type: String },
     },
     created_at: { type: String, required: true },
     updated_at: { type: String, required: true },
@@ -55,7 +97,7 @@ const repositorySchema = new Schema<RepositoryDocument>(
   {
     timestamps: true,
     toJSON: {
-      transform: (doc, ret) => {
+      transform: (doc: any, ret: any) => {
         ret._id = ret._id.toString()
         return ret
       },
