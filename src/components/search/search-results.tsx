@@ -44,15 +44,15 @@ export function SearchResults({ repositories }: SearchResultsProps) {
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  <Link href={`/repository/${repo.full_name}`}>{repo.name}</Link>
+                  <Link href={`/repository/${repo.owner}/${repo.name}`}>{repo.name}</Link>
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{repo.full_name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{`${repo.owner}/${repo.name}`}</p>
                 <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">
                   {repo.category}
                 </span>
               </div>
               <Link
-                href={repo.html_url}
+                href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -75,7 +75,7 @@ export function SearchResults({ repositories }: SearchResultsProps) {
               </div>
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
-                <span>{formatDate(repo.updated_at)}</span>
+                <span>{formatDate(repo.lastUpdate)}</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
