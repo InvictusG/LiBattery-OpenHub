@@ -9,6 +9,7 @@ export interface Repository {
   owner: string;
   ownerUrl: string;
   lastUpdate: string;
+  topics: string[];
 }
 
 export interface Category {
