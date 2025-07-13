@@ -5,6 +5,22 @@ import { ApiResponse, SearchFilters } from '@/types'
 
 export async function GET(request: NextRequest) {
   try {
+    // 检查是否有MongoDB连接字符串
+    if (!process.env.MONGODB_URI) {
+      return NextResponse.json({
+        success: false,
+        message: 'Database not configured. This is a demo deployment.',
+        data: {
+          repositories: [],
+          total: 0,
+          page: 1,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false
+        }
+      })
+    }
+
     await connectToDatabase()
 
     const { searchParams } = new URL(request.url)
@@ -28,66 +44,57 @@ export async function GET(request: NextRequest) {
     }
 
     if (language) {
-      filters.language = language
+      filters.language = { $regex: new RegExp(language, 'i') }
+    }
+
+    if (query) {
+      filters.$or = [
+        { name: { $regex: new RegExp(query, 'i') } },
+        { description: { $regex: new RegExp(query, 'i') } },
+        { topics: { $elemMatch: { $regex: new RegExp(query, 'i') } } }
+      ]
     }
 
     if (minStars) {
-      filters.stargazers_count = { $gte: parseInt(minStars) }
+      filters.stars = { ...filters.stars, $gte: parseInt(minStars) }
     }
 
     if (maxStars) {
-      filters.stargazers_count = { 
-        ...filters.stargazers_count, 
-        $lte: parseInt(maxStars) 
+      filters.stars = { ...filters.stars, $lte: parseInt(maxStars) }
+    }
+
+    if (hasLicense !== null) {
+      if (hasLicense === 'true') {
+        filters.license = { $nin: [null, ''] }
+      } else if (hasLicense === 'false') {
+        filters.$or = [
+          { license: null },
+          { license: '' }
+        ]
       }
     }
 
-    if (hasLicense === 'true') {
-      filters['license.key'] = { $ne: null }
-    } else if (hasLicense === 'false') {
-      filters['license.key'] = null
-    }
-
-    if (isArchived === 'true') {
-      filters.archived = true
-    } else if (isArchived === 'false') {
-      filters.archived = false
+    if (isArchived !== null) {
+      filters.archived = isArchived === 'true'
     }
 
     // 构建排序条件
     const sortOptions: any = {}
-    if (sortBy === 'stars') {
-      sortOptions.stargazers_count = sortOrder === 'desc' ? -1 : 1
-    } else if (sortBy === 'updated') {
-      sortOptions.updated_at = sortOrder === 'desc' ? -1 : 1
-    } else if (sortBy === 'created') {
-      sortOptions.created_at = sortOrder === 'desc' ? -1 : 1
-    } else if (sortBy === 'relevance' && query) {
-      sortOptions.score = { $meta: 'textScore' }
-    }
+    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1
 
-    // 执行搜索
-    let repositories
-    let total
+    // 计算分页
+    const skip = (page - 1) * limit
 
-    if (query) {
-      // 文本搜索
-      filters.$text = { $search: query }
-      repositories = await Repository.find(filters, { score: { $meta: 'textScore' } })
-        .sort(sortOptions)
-        .limit(limit)
-        .skip((page - 1) * limit)
-      
-      total = await Repository.countDocuments(filters)
-    } else {
-      // 普通查询
-      repositories = await Repository.find(filters)
-        .sort(sortOptions)
-        .limit(limit)
-        .skip((page - 1) * limit)
-      
-      total = await Repository.countDocuments(filters)
-    }
+    // 执行查询
+    const repositories = await Repository
+      .find(filters)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit)
+      .lean()
+
+    const total = await Repository.countDocuments(filters)
+    const totalPages = Math.ceil(total / limit)
 
     const response: ApiResponse = {
       success: true,
@@ -95,104 +102,101 @@ export async function GET(request: NextRequest) {
         repositories,
         total,
         page,
-        totalPages: Math.ceil(total / limit),
-        filters: {
-          query,
-          category,
-          language,
-          minStars: minStars ? parseInt(minStars) : undefined,
-          maxStars: maxStars ? parseInt(maxStars) : undefined,
-          hasLicense: hasLicense === 'true' ? true : hasLicense === 'false' ? false : undefined,
-          isArchived: isArchived === 'true' ? true : isArchived === 'false' ? false : undefined,
-          sortBy,
-          sortOrder,
-          page,
-          limit,
-        },
-      },
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
     }
 
     return NextResponse.json(response)
+
   } catch (error) {
     console.error('API Error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    )
+    return NextResponse.json({
+      success: false,
+      message: 'Internal server error',
+      data: {
+        repositories: [],
+        total: 0,
+        page: 1,
+        totalPages: 0,
+        hasNext: false,
+        hasPrev: false
+      }
+    }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    // 检查是否有MongoDB连接字符串
+    if (!process.env.MONGODB_URI) {
+      return NextResponse.json({
+        success: false,
+        message: 'Database not configured. This is a demo deployment.'
+      }, { status: 503 })
+    }
+
     await connectToDatabase()
 
     const body = await request.json()
     const { repositories } = body
 
-    if (!repositories || !Array.isArray(repositories)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid request body',
-          message: 'repositories array is required',
-        },
-        { status: 400 }
-      )
-    }
-
-    const results = []
-    for (const repo of repositories) {
-      try {
-        const existingRepo = await Repository.findOne({ id: repo.id })
-        if (existingRepo) {
-          // 更新现有仓库
-          const updatedRepo = await Repository.findOneAndUpdate(
-            { id: repo.id },
-            { ...repo, last_synced: new Date().toISOString() },
-            { new: true }
-          )
-          results.push(updatedRepo)
-        } else {
-          // 创建新仓库
-          const newRepo = new Repository({
-            ...repo,
-            last_synced: new Date().toISOString(),
-          })
-          const savedRepo = await newRepo.save()
-          results.push(savedRepo)
-        }
-      } catch (error) {
-        console.error(`Error processing repository ${repo.id}:`, error)
-        continue
-      }
-    }
-
-    const response: ApiResponse = {
-      success: true,
-      data: results,
-      message: `Successfully processed ${results.length} repositories`,
-    }
-
-    return NextResponse.json(response)
-  } catch (error) {
-    console.error('API Error:', error)
-    return NextResponse.json(
-      {
+    if (!Array.isArray(repositories)) {
+      return NextResponse.json({
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    )
+        message: 'Invalid data format'
+      }, { status: 400 })
+    }
+
+    // 批量插入或更新仓库数据
+    const bulkOps = repositories.map(repo => ({
+      updateOne: {
+        filter: { githubId: repo.githubId },
+        update: { $set: repo },
+        upsert: true
+      }
+    }))
+
+    const result = await Repository.bulkWrite(bulkOps)
+
+    return NextResponse.json({
+      success: true,
+      message: `Successfully processed ${repositories.length} repositories`,
+      data: {
+        inserted: result.upsertedCount,
+        updated: result.modifiedCount,
+        total: repositories.length
+      }
+    })
+
+  } catch (error) {
+    console.error('Bulk insert error:', error)
+    return NextResponse.json({
+      success: false,
+      message: 'Failed to process repositories'
+    }, { status: 500 })
   }
+}
+
+// 处理其他HTTP方法
+export async function PUT(request: NextRequest) {
+  return NextResponse.json({
+    success: false,
+    message: 'Method not allowed'
+  }, { status: 405 })
+}
+
+export async function DELETE(request: NextRequest) {
+  return NextResponse.json({
+    success: false,
+    message: 'Method not allowed'
+  }, { status: 405 })
+}
+
+export async function PATCH(request: NextRequest) {
+  return NextResponse.json({
+    success: false,
+    message: 'Method not allowed'
+  }, { status: 405 })
 } 

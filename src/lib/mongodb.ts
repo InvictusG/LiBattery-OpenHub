@@ -2,8 +2,12 @@ import mongoose from 'mongoose'
 
 const MONGODB_URI = process.env.MONGODB_URI
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
+// 在构建时不抛出错误，只在运行时检查
+function checkMongoUri() {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
+  }
+  return MONGODB_URI
 }
 
 /**
@@ -23,6 +27,9 @@ if (!cached) {
 }
 
 async function connectToDatabase() {
+  // 在运行时检查MongoDB URI
+  const mongoUri = checkMongoUri()
+  
   if (cached.conn) {
     return cached.conn
   }
@@ -30,14 +37,9 @@ async function connectToDatabase() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      family: 4,
     }
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('✅ Connected to MongoDB')
+    cached.promise = mongoose.connect(mongoUri, opts).then((mongoose) => {
       return mongoose
     })
   }
