@@ -1,14 +1,26 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Search, ArrowRight, Battery, Zap, Shield, Cpu } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
 
 export function HeroSection() {
   const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  })
+  
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, 100])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,33 +53,41 @@ export function HeroSection() {
   ]
 
   return (
-    <section className="relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
+    <section 
+      ref={containerRef}
+      className="relative min-h-[90vh] w-full overflow-hidden bg-background"
+    >
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background/50 dark:from-background dark:via-background/80 dark:to-background/20 z-0" />
       
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse-slow" />
+      {/* Animated grid pattern */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]" />
       </div>
-
-      <div className="relative container mx-auto px-4 py-20">
-        <div className="text-center space-y-8">
+      
+      {/* Animated blobs */}
+      <div className="absolute -left-20 -top-20 h-[30rem] w-[30rem] rounded-full bg-purple-400/20 blur-[100px] dark:bg-purple-700/20" />
+      <div className="absolute -right-20 -bottom-20 h-[30rem] w-[30rem] rounded-full bg-blue-400/20 blur-[100px] dark:bg-blue-700/20" />
+      
+      <div className="container relative z-10 mx-auto px-4 py-16 md:py-24">
+        <motion.div 
+          style={{ opacity, y }}
+          className="flex flex-col items-center justify-center space-y-12 text-center"
+        >
           {/* Main heading */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-4"
+            className="space-y-4 max-w-4xl"
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-4xl font-bold tracking-tight md:text-6xl text-foreground">
               锂离子电池
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent ml-2">
                 开源资源中心
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               汇聚全球最新的锂离子电池开源项目、研究工具和技术资源，为电池工程师和研究人员提供一站式解决方案
             </p>
           </motion.div>
@@ -77,25 +97,25 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl mx-auto"
+            className="w-full max-w-2xl mx-auto"
           >
             <form onSubmit={handleSearch} className="relative">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
+              <div className="relative flex items-center">
+                <Input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="搜索电池技术、BMS系统、寿命预测..."
-                  className="w-full pl-12 pr-32 py-4 text-lg border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 dark:border-gray-600 dark:text-white"
+                  className="pr-24 pl-10 py-6 h-14 text-base rounded-full border-border/40 bg-background/80 backdrop-blur-sm shadow-lg"
                 />
-                <button
+                <Search className="absolute left-3.5 text-muted-foreground h-5 w-5" />
+                <Button 
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl transition-colors flex items-center space-x-2"
+                  className="absolute right-1.5 rounded-full h-11"
                 >
                   <span>搜索</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </form>
           </motion.div>
@@ -105,57 +125,77 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-wrap justify-center gap-4"
+            className="flex flex-wrap justify-center gap-3"
           >
-            <Link
-              href="/trending"
-              className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 px-6 py-3 rounded-xl transition-all hover:shadow-lg hover:scale-105"
-            >
-              <span className="text-gray-700 dark:text-gray-300">🔥 热门项目</span>
+            <Link href="/trending">
+              <Button variant="outline" className="rounded-full h-11 px-6 border-border/40 bg-background/80 backdrop-blur-sm hover:bg-background/90 hover:border-border">
+                🔥 热门项目
+              </Button>
             </Link>
-            <Link
-              href="/categories"
-              className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 px-6 py-3 rounded-xl transition-all hover:shadow-lg hover:scale-105"
-            >
-              <span className="text-gray-700 dark:text-gray-300">📚 分类浏览</span>
+            <Link href="/categories">
+              <Button variant="outline" className="rounded-full h-11 px-6 border-border/40 bg-background/80 backdrop-blur-sm hover:bg-background/90 hover:border-border">
+                📚 分类浏览
+              </Button>
             </Link>
-            <Link
-              href="/contribute"
-              className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 px-6 py-3 rounded-xl transition-all hover:shadow-lg hover:scale-105"
-            >
-              <span className="text-gray-700 dark:text-gray-300">➕ 贡献项目</span>
+            <Link href="/contribute">
+              <Button variant="outline" className="rounded-full h-11 px-6 border-border/40 bg-background/80 backdrop-blur-sm hover:bg-background/90 hover:border-border">
+                ➕ 贡献项目
+              </Button>
             </Link>
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Feature grid */}
+        {/* Feature cards */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {features.map((feature, index) => {
             const Icon = feature.icon
             return (
-              <div
+              <FeatureCard
                 key={feature.title}
-                className="text-center p-6 bg-white/60 backdrop-blur-sm dark:bg-gray-800/60 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all hover:scale-105"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  {feature.description}
-                </p>
-              </div>
+                icon={<Icon className="h-5 w-5" />}
+                title={feature.title}
+                description={feature.description}
+                index={index}
+              />
             )
           })}
         </motion.div>
       </div>
     </section>
+  )
+}
+
+interface FeatureCardProps {
+  icon: React.ReactNode
+  title: string
+  description: string
+  index: number
+}
+
+const FeatureCard = ({ icon, title, description, index }: FeatureCardProps) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.1 * index + 0.6 }}
+    >
+      <Card className="relative overflow-hidden border-border/40 bg-background/80 backdrop-blur-sm hover:bg-background/90 hover:border-border transition-all duration-300 h-full">
+        <div className="p-6">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 dark:from-blue-500/10 dark:to-purple-500/10">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+              {icon}
+            </div>
+          </div>
+          <h3 className="mb-2 text-xl font-medium text-foreground">{title}</h3>
+          <p className="text-muted-foreground">{description}</p>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      </Card>
+    </motion.div>
   )
 } 
