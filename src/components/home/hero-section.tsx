@@ -1,17 +1,19 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Search, ArrowRight, Battery, Zap, Shield, Cpu } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export function HeroSection() {
   const [searchQuery, setSearchQuery] = useState('')
+  const router = useRouter()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
     }
   }
 

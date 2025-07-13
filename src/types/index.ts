@@ -1,48 +1,21 @@
-// 仓库相关类型
 export interface Repository {
-  _id?: string
-  id: number
-  name: string
-  full_name: string
-  description: string | null
-  html_url: string
-  clone_url: string
-  ssh_url: string
-  homepage: string | null
-  language: string | null
-  topics: string[]
-  stargazers_count: number
-  watchers_count: number
-  forks_count: number
-  open_issues_count: number
-  size: number
-  license: {
-    key: string
-    name: string
-    spdx_id: string
-    url: string
-  } | null
-  owner: {
-    login: string
-    id: number
-    avatar_url: string
-    html_url: string
-    type: string
-  } | null
-  created_at: string
-  updated_at: string
-  pushed_at: string
-  archived: boolean
-  disabled: boolean
-  visibility: string
-  default_branch: string
-  // 自定义字段
-  category: BatteryCategory
-  tags: string[]
-  featured: boolean
-  ai_summary?: string
-  relevance_score?: number
-  last_synced: string
+  id: number;
+  name: string;
+  stars: number;
+  forks: number;
+  description: string;
+  category: string;
+  url: string;
+  owner: string;
+  ownerUrl: string;
+  lastUpdate: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+  repositories: number;
 }
 
 // 电池相关分类

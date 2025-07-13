@@ -208,7 +208,7 @@ export default function CategoryDetailPage() {
     }
   ]
 
-  const currentCategory = categoryInfo[categoryId as keyof typeof categoryInfo]
+  const currentCategory = categoryInfo[categoryId.toLowerCase() as keyof typeof categoryInfo]
   
   if (!currentCategory) {
     return (

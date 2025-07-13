@@ -1,0 +1,214 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "LiBattery OpenHub":
+    - /url: /
+    - img
+    - text: LiBattery OpenHub
+  - link "首页":
+    - /url: /
+    - img
+    - text: 首页
+  - link "搜索":
+    - /url: /search
+    - img
+    - text: 搜索
+  - link "分类":
+    - /url: /categories
+    - img
+    - text: 分类
+  - link "热门":
+    - /url: /trending
+    - img
+    - text: 热门
+  - link "贡献":
+    - /url: /contribute
+    - img
+    - text: 贡献
+  - button "切换主题":
+    - img
+  - link "GitHub":
+    - /url: https://github.com/your-username/libattery-openhub
+    - img
+- main:
+  - heading "技术分类" [level=1]
+  - paragraph: 按照电池技术领域分类浏览，快速找到您感兴趣的开源项目
+  - text: 12 技术分类 1098 开源项目 5 热门分类
+  - img
+  - text: 热门
+  - heading "电芯设计与建模" [level=3]
+  - paragraph: 电池单体设计、电极材料优化、电化学建模等核心技术
+  - text: 156 个项目 CellSim ⭐ 1234 ElectrodeDesign ⭐ 890
+  - link "查看全部项目":
+    - /url: /categories/cell-design
+    - text: 查看全部项目
+    - img
+  - img
+  - text: 热门
+  - heading "电池寿命预测" [level=3]
+  - paragraph: 基于数据驱动和物理模型的电池寿命预测技术
+  - text: 89 个项目 BatteryML ⭐ 2340 LifeCycle ⭐ 1456
+  - link "查看全部项目":
+    - /url: /categories/life-prediction
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "电池管理系统" [level=3]
+  - paragraph: BMS硬件设计、软件算法、平衡控制等管理系统技术
+  - text: 134 个项目 OpenBMS ⭐ 1890 SmartBMS ⭐ 1234
+  - link "查看全部项目":
+    - /url: /categories/bms
+    - text: 查看全部项目
+    - img
+  - img
+  - text: 热门
+  - heading "仿真与模拟工具" [level=3]
+  - paragraph: 电池性能仿真、多物理场耦合、有限元分析等仿真技术
+  - text: 98 个项目 PyBaMM ⭐ 1200 LIONSIMBA ⭐ 456
+  - link "查看全部项目":
+    - /url: /categories/simulation
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "热管理系统" [level=3]
+  - paragraph: 电池热管理、散热设计、温度控制等热相关技术
+  - text: 67 个项目 ThermalBMS ⭐ 756 CoolCell ⭐ 543
+  - link "查看全部项目":
+    - /url: /categories/thermal
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "安全与监控" [level=3]
+  - paragraph: 电池安全监测、故障诊断、风险评估等安全技术
+  - text: 78 个项目 SafetyMonitor ⭐ 987 FaultDetect ⭐ 654
+  - link "查看全部项目":
+    - /url: /categories/safety
+    - text: 查看全部项目
+    - img
+  - img
+  - text: 热门
+  - heading "材料科学研究" [level=3]
+  - paragraph: 电极材料、电解液、隔膜等电池材料的研究与开发
+  - text: 123 个项目 MaterialDB ⭐ 1567 ElectrolyteDesign ⭐ 890
+  - link "查看全部项目":
+    - /url: /categories/materials
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "制造工艺优化" [level=3]
+  - paragraph: 电池制造过程优化、工艺控制、质量管理等制造技术
+  - text: 45 个项目 ProcessOpt ⭐ 543 QualityControl ⭐ 432
+  - link "查看全部项目":
+    - /url: /categories/manufacturing
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "测试与表征工具" [level=3]
+  - paragraph: 电池性能测试、电化学表征、数据采集等测试技术
+  - text: 87 个项目 TestBench ⭐ 876 DataLogger ⭐ 654
+  - link "查看全部项目":
+    - /url: /categories/testing
+    - text: 查看全部项目
+    - img
+  - img
+  - text: 热门
+  - heading "数据分析与可视化" [level=3]
+  - paragraph: 电池数据分析、可视化展示、统计分析等数据处理技术
+  - text: 92 个项目 BEEP ⭐ 890 BatteryViz ⭐ 765
+  - link "查看全部项目":
+    - /url: /categories/data-analysis
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "数学建模工具" [level=3]
+  - paragraph: 电池数学模型、算法实现、数值计算等建模技术
+  - text: 73 个项目 MathModel ⭐ 987 AlgoKit ⭐ 654
+  - link "查看全部项目":
+    - /url: /categories/modeling
+    - text: 查看全部项目
+    - img
+  - img
+  - heading "优化算法" [level=3]
+  - paragraph: 电池系统优化、参数调优、智能算法等优化技术
+  - text: 56 个项目 OptimizeCore ⭐ 765 ParamTuner ⭐ 543
+  - link "查看全部项目":
+    - /url: /categories/optimization
+    - text: 查看全部项目
+    - img
+  - heading "没找到合适的分类？" [level=2]
+  - paragraph: 我们持续收录更多电池技术相关的开源项目，欢迎推荐或贡献
+  - link "推荐项目":
+    - /url: /contribute
+  - link "搜索项目":
+    - /url: /search
+- contentinfo:
+  - link "LiBattery OpenHub":
+    - /url: /
+    - img
+    - text: LiBattery OpenHub
+  - paragraph: 锂离子电池开源资源聚合平台，为全球电池技术工作者提供最新的开源项目、工具和研究资源。
+  - link "GitHub":
+    - /url: https://github.com/your-username/libattery-openhub
+    - img
+  - link "Battery University":
+    - /url: https://batteryuniversity.com
+    - img
+  - link "IEEE Xplore":
+    - /url: https://ieeexplore.ieee.org
+    - img
+  - heading "资源导航" [level=3]
+  - list:
+    - listitem:
+      - link "项目搜索":
+        - /url: /search
+    - listitem:
+      - link "分类浏览":
+        - /url: /categories
+    - listitem:
+      - link "热门项目":
+        - /url: /trending
+    - listitem:
+      - link "API 文档":
+        - /url: /docs
+  - heading "社区参与" [level=3]
+  - list:
+    - listitem:
+      - link "贡献指南":
+        - /url: /contribute
+    - listitem:
+      - link "问题反馈":
+        - /url: /feedback
+    - listitem:
+      - link "社区讨论":
+        - /url: /discussions
+    - listitem:
+      - link "开发者":
+        - /url: /developers
+  - heading "关于平台" [level=3]
+  - list:
+    - listitem:
+      - link "关于我们":
+        - /url: /about
+    - listitem:
+      - link "使用条款":
+        - /url: /terms
+    - listitem:
+      - link "隐私政策":
+        - /url: /privacy
+    - listitem:
+      - link "联系我们":
+        - /url: /contact
+  - text: © 2025 LiBattery OpenHub. Built with
+  - img
+  - text: for the battery community Powered by
+  - link "Next.js":
+    - /url: https://nextjs.org
+  - text: •
+  - link "Tailwind CSS":
+    - /url: https://tailwindcss.com
+  - text: •
+  - link "Vercel":
+    - /url: https://vercel.com
+- alert
+```
