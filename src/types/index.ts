@@ -37,10 +37,12 @@ export enum BatteryCategory {
   SAFETY = 'safety',                     // 安全相关
   MATERIALS = 'materials',               // 材料科学
   MANUFACTURING = 'manufacturing',       // 制造工艺
+  PACK_MANUFACTURING = 'pack_manufacturing', // 电池包制造 (新增)
   TESTING = 'testing',                   // 测试工具
   DATA_ANALYSIS = 'data_analysis',       // 数据分析
   MODELING = 'modeling',                 // 建模工具
   OPTIMIZATION = 'optimization',         // 优化算法
+  RECYCLING = 'recycling',               // 回收与可持续性 (新增)
   OTHER = 'other'                        // 其他
 }
 
@@ -54,10 +56,12 @@ export const CategoryLabels: Record<BatteryCategory, string> = {
   [BatteryCategory.SAFETY]: '安全相关',
   [BatteryCategory.MATERIALS]: '材料科学',
   [BatteryCategory.MANUFACTURING]: '制造工艺',
+  [BatteryCategory.PACK_MANUFACTURING]: '电池包制造',
   [BatteryCategory.TESTING]: '测试工具',
   [BatteryCategory.DATA_ANALYSIS]: '数据分析',
   [BatteryCategory.MODELING]: '建模工具',
   [BatteryCategory.OPTIMIZATION]: '优化算法',
+  [BatteryCategory.RECYCLING]: '回收与可持续性',
   [BatteryCategory.OTHER]: '其他'
 }
 

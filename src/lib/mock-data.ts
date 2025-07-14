@@ -113,6 +113,22 @@ export const mockRepositories: Repository[] = [
     license: { name: 'MIT' },
     updated_at: '2024-06-15',
     archived: true,
+  },
+  {
+    id: 8,
+    name: 'batpaq',
+    full_name: 'NREL/batpaq',
+    html_url: 'https://github.com/NREL/batpaq',
+    description: 'A tool for creating and analyzing battery pack geometries.',
+    owner: { login: 'NREL', avatar_url: '' },
+    stars: 250,
+    forks: 60,
+    topics: ['battery-pack', 'design', 'thermal-analysis'],
+    category: BatteryCategory.PACK_MANUFACTURING,
+    language: 'Python',
+    license: { name: 'MIT' },
+    updated_at: '2024-05-20',
+    archived: false,
   }
 ];
 
