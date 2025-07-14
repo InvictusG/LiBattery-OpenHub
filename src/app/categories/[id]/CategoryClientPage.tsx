@@ -1,5 +1,5 @@
 "use client";
-
+    
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -37,6 +37,7 @@ export default function CategoryClientPage({ category, initialProjects }: Catego
       } else if (sortBy === 'forks') {
         return (a.forks - b.forks) * order;
       } else if (sortBy === 'updated') {
+        // 这是修复后的代码
         return (new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()) * order;
       }
       return 0;
@@ -127,4 +128,4 @@ export default function CategoryClientPage({ category, initialProjects }: Catego
         )}
     </div>
   );
-} 
+}

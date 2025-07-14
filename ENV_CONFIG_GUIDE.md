@@ -10,8 +10,8 @@
 # 选项 A: 本地 MongoDB (开发推荐)
 MONGODB_URI=mongodb://localhost:27017/libattery-hub
 
-# 选项 B: MongoDB Atlas (生产推荐)
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/libattery-hub?retryWrites=true&w=majority
+                                                        # 选项 B: MongoDB Atlas (生产推荐)
+                                                        # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/libattery-hub?retryWrites=true&w=majority
 ```
 
 ### 2. GitHub API Token (必需)
