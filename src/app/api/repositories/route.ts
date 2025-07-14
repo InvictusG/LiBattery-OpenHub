@@ -9,7 +9,7 @@ const transformRepository = (repo: GitHubRepository): Repository => ({
   description: repo.description || 'No description provided.',
   language: repo.language || 'N/A',
   stars: repo.stargazers_count,
-  forks: repo.forks_count || 0,
+  forks: repo.forks || 0, // Corrected from forks_count to forks
   updated_at: repo.updated_at,
   topics: repo.topics || [],
   category: repo.topics?.includes('bms') ? 'BMS' : 'OTHER', // Simple categorization
