@@ -46,7 +46,7 @@ export const ProjectCard = ({ repo, index }: ProjectCardProps) => {
                 {repo.name}
               </h3>
             </div>
-            <Link href={repo.url} target="_blank" rel="noopener noreferrer" className="ml-4 flex-shrink-0">
+            <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="ml-4 flex-shrink-0">
               <ExternalLink className="h-5 w-5 text-slate-400 transition-colors duration-300 group-hover:text-slate-700 dark:group-hover:text-slate-200" />
             </Link>
           </div>
