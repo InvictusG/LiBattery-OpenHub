@@ -3,26 +3,40 @@
 import React from 'react'
 import { Filter } from 'lucide-react'
 
-export function SearchFilters() {
-  const categories = [
-    '电芯设计', '寿命预测', 'BMS系统', '模拟工具', '热管理',
-    '安全监控', '材料科学', '制造工艺', '测试工具', '数据分析',
-    '数学建模', '优化算法'
-  ]
+interface SearchFiltersProps {
+  filters: {
+    category: string;
+    language: string;
+    minStars: string;
+    hasLicense: string;
+  };
+  onFilterChange: (key: string, value: string) => void;
+  categories: string[];
+  languages: string[];
+}
 
-  const languages = ['Python', 'MATLAB', 'C++', 'Julia', 'R', 'JavaScript', 'Java']
+export function SearchFilters({ filters, onFilterChange, categories, languages }: SearchFiltersProps) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    onFilterChange(e.target.name, e.target.value);
+  };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-      <div className="flex items-center mb-4">
-        <Filter className="h-5 w-5 mr-2 text-gray-600 dark:text-gray-400" />
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">筛选器</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+      <div className="flex items-center mb-6">
+        <Filter className="h-5 w-5 mr-3 text-slate-600 dark:text-slate-400" />
+        <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Filters</h3>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">分类</label>
-          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-blue-500 focus:border-blue-500">
-            <option value="">全部分类</option>
+          <label htmlFor="category" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
+          <select
+            id="category"
+            name="category"
+            value={filters.category}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-blue-500 focus:border-blue-500 transition"
+          >
+            <option value="">All Categories</option>
             {categories.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
@@ -30,9 +44,15 @@ export function SearchFilters() {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">编程语言</label>
-          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-blue-500 focus:border-blue-500">
-            <option value="">全部语言</option>
+          <label htmlFor="language" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Language</label>
+          <select
+            id="language"
+            name="language"
+            value={filters.language}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-blue-500 focus:border-blue-500 transition"
+          >
+            <option value="">All Languages</option>
             {languages.map(lang => (
               <option key={lang} value={lang}>{lang}</option>
             ))}
@@ -40,20 +60,30 @@ export function SearchFilters() {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">最小星标数</label>
+          <label htmlFor="minStars" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Minimum Stars</label>
           <input
             type="number"
-            placeholder="例如: 100"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-blue-500 focus:border-blue-500"
+            id="minStars"
+            name="minStars"
+            value={filters.minStars}
+            onChange={handleInputChange}
+            placeholder="e.g., 100"
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-blue-500 focus:border-blue-500 transition"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">许可证</label>
-          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-blue-500 focus:border-blue-500">
-            <option value="">不限</option>
-            <option value="true">有许可证</option>
-            <option value="false">无许可证</option>
+          <label htmlFor="hasLicense" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">License</label>
+          <select
+            id="hasLicense"
+            name="hasLicense"
+            value={filters.hasLicense}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-blue-500 focus:border-blue-500 transition"
+          >
+            <option value="">Any</option>
+            <option value="true">With License</option>
+            <option value="false">Without License</option>
           </select>
         </div>
       </div>

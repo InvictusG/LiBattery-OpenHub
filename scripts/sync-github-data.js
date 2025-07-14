@@ -1,6 +1,22 @@
 const { Octokit } = require('@octokit/rest')
 const mongoose = require('mongoose')
-require('dotenv').config()
+// Explicitly load environment variables from .env.local
+require('dotenv').config({ path: require('path').resolve(process.cwd(), '.env.local') })
+
+// --- Pre-flight checks for environment variables ---
+if (!process.env.GITHUB_TOKEN) {
+  console.error('❌ FATAL ERROR: GITHUB_TOKEN environment variable is not set.')
+  console.error('Please ensure you have a .env.local file with GITHUB_TOKEN defined.')
+  process.exit(1)
+}
+
+if (!process.env.MONGODB_URI) {
+  console.error('❌ FATAL ERROR: MONGODB_URI environment variable is not set.')
+  console.error('Please ensure you have a .env.local file with MONGODB_URI defined.')
+  process.exit(1)
+}
+// --- End pre-flight checks ---
+
 
 // GitHub API 客户端
 const octokit = new Octokit({
@@ -9,9 +25,14 @@ const octokit = new Octokit({
 
 // 连接到 MongoDB
 async function connectToDatabase() {
+  if (mongoose.connection.readyState >= 1) {
+    console.log('MongoDB is already connected.');
+    return;
+  }
   try {
-    await mongoose.connect(process.env.MONGODB_URI)
-    console.log('✅ Connected to MongoDB')
+    console.log('🟡 Connecting to MongoDB...');
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log('✅ Connected to MongoDB successfully!');
   } catch (error) {
     console.error('❌ MongoDB connection failed:', error)
     process.exit(1)
@@ -249,14 +270,14 @@ async function saveRepository(repo) {
     
     const existingRepo = await Repository.findOne({ id: repo.id })
     if (existingRepo) {
-      await Repository.findOneAndUpdate({ id: repo.id }, repositoryData)
-      console.log(`✅ Updated: ${repo.full_name}`)
+      await Repository.updateOne({ id: repo.id }, { $set: repositoryData });
+      console.log(`🔄 Updated repository: ${repo.full_name}`);
     } else {
       await Repository.create(repositoryData)
-      console.log(`🆕 Created: ${repo.full_name}`)
+      console.log(`💾 Saved new repository: ${repo.full_name}`);
     }
   } catch (error) {
-    console.error(`❌ Error saving ${repo.full_name}:`, error.message)
+    console.error(`❌ Error saving repository ${repo.full_name}:`, error.message);
   }
 }
 

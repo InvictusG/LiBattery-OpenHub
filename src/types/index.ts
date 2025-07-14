@@ -1,15 +1,23 @@
 export interface Repository {
   id: number;
   name: string;
+  full_name: string;
+  description: string;
+  language: string;
   stars: number;
   forks: number;
-  description: string;
-  category: string;
-  url: string;
-  owner: string;
-  ownerUrl: string;
-  lastUpdate: string;
+  updated_at: string;
   topics: string[];
+  category: string;
+  html_url: string;
+  license?: {
+    name: string;
+  } | null;
+  archived: boolean;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
 }
 
 export interface Category {
