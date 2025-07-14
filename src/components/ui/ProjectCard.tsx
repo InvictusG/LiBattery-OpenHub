@@ -41,7 +41,7 @@ export const ProjectCard = ({ repo, index }: ProjectCardProps) => {
         <div className="flex-grow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-sm font-medium text-blue-600 dark:text-blue-500">{repo.owner}</p>
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-500">{repo.owner.login}</p>
               <h3 className="mt-1 text-lg font-bold text-slate-800 dark:text-slate-100">
                 {repo.name}
               </h3>
