@@ -1,10 +1,11 @@
 "use client";
     
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import useSWR from 'swr';
 import { 
-  ArrowLeft, Search, SortAsc, SortDesc, Book, Package,
+  ArrowLeft, Search, SortAsc, SortDesc, Book, Package, Loader2
 } from 'lucide-react';
 import { Repository, Category } from '@/types';
 import { ProjectCard } from '@/components/ui/ProjectCard';
@@ -14,45 +15,46 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 interface CategoryClientPageProps {
   category: Category;
-  initialProjects: Repository[];
 }
 
-export default function CategoryClientPage({ category, initialProjects }: CategoryClientPageProps) {
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
+export default function CategoryClientPage({ category }: CategoryClientPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('stars');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
-  const filteredProjects = initialProjects
-    .filter(repo => {
-      const matchesSearch = !searchQuery ||
-        repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        repo.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        repo.topics.some(topic => topic.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesSearch;
-    })
-    .sort((a, b) => {
-      const order = sortOrder === 'desc' ? -1 : 1;
-      if (sortBy === 'stars') {
-        return (a.stars - b.stars) * order;
-      } else if (sortBy === 'forks') {
-        return (a.forks - b.forks) * order;
-      } else if (sortBy === 'updated') {
-        // 这是修复后的代码
-        return (new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()) * order;
-      }
-      return 0;
-    });
-    
+  // Debounce search query to avoid excessive API calls
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  const apiUrl = `/api/repositories?q=${encodeURIComponent(category.name)} ${encodeURIComponent(debouncedSearchQuery)}&sort=${sortBy}&order=${sortOrder}&per_page=30`;
+  
+  const { data, error } = useSWR(apiUrl, fetcher);
+
+  const isLoading = !data && !error;
+  const projects: Repository[] = data?.data?.repositories || [];
+
   if (!category) {
+    // This case should ideally be handled by the server component with notFound()
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
+      <div className="flex min-h-[60vh] items-center justify-center text-center">
+        <div>
           <Package className="mx-auto h-12 w-12 text-slate-400" />
           <h1 className="mt-4 text-2xl font-bold">Category Not Found</h1>
+          <p className="mt-2 text-slate-500">The category you are looking for does not exist.</p>
           <Button asChild className="mt-6">
-            <Link href="/categories">
+            <Link href="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Categories
+              Back to Home
             </Link>
           </Button>
         </div>
@@ -64,9 +66,9 @@ export default function CategoryClientPage({ category, initialProjects }: Catego
     <div className="space-y-8">
        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
         <Button variant="ghost" asChild>
-          <Link href="/categories">
+          <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Categories
+            Back to Home
           </Link>
         </Button>
       </motion.div>
@@ -114,18 +116,29 @@ export default function CategoryClientPage({ category, initialProjects }: Catego
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProjects.map((repo, index) => (
-          <ProjectCard key={repo.id} repo={repo} index={index} />
-        ))}
-      </div>
-       {filteredProjects.length === 0 && (
-          <div className="col-span-full py-12 text-center">
-             <Package className="mx-auto h-12 w-12 text-slate-400" />
-             <h3 className="mt-2 text-xl font-semibold text-slate-700 dark:text-slate-200">No Matching Projects</h3>
-             <p className="mt-1 text-slate-500 dark:text-slate-400">Try adjusting your search query.</p>
-          </div>
-        )}
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+        </div>
+      ) : error ? (
+        <div className="col-span-full py-12 text-center text-red-500">
+          <Package className="mx-auto h-12 w-12" />
+          <h3 className="mt-2 text-xl font-semibold">Failed to load projects.</h3>
+          <p className="mt-1 text-sm">{error.message || 'Please try again later.'}</p>
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="col-span-full py-12 text-center">
+           <Package className="mx-auto h-12 w-12 text-slate-400" />
+           <h3 className="mt-2 text-xl font-semibold text-slate-700 dark:text-slate-200">No Matching Projects</h3>
+           <p className="mt-1 text-slate-500 dark:text-slate-400">Try adjusting your search query.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((repo, index) => (
+            <ProjectCard key={repo.id} repo={repo} index={index} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
