@@ -37,7 +37,7 @@ export default function CategoryClientPage({ category, initialProjects }: Catego
       } else if (sortBy === 'forks') {
         return (a.forks - b.forks) * order;
       } else if (sortBy === 'updated') {
-        return (new Date(a.lastUpdate).getTime() - new Date(b.lastUpdate).getTime()) * order;
+        return (new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()) * order;
       }
       return 0;
     });
