@@ -25,15 +25,21 @@ import {
   ExternalLink,
   SortAsc,
   SortDesc,
-  Package
+  Package,
+  Tag,
+  Book
 } from 'lucide-react'
 import { Repository } from '@/types'
-import { mockRepositories } from '@/lib/mock-data'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { mockCategories, mockRepositories } from '@/lib/mock-data';
+import { notFound } from 'next/navigation';
+import { ProjectCard } from '@/components/ui/ProjectCard';
+
+export async function generateStaticParams() {
+  const categories = mockCategories;
+  return categories.map((category) => ({
+    id: category.id,
+  }));
+}
 
 export default function CategoryDetailPage() {
   const params = useParams()
@@ -53,9 +59,9 @@ export default function CategoryDetailPage() {
     'PACK_MANUFACTURING': { name: '电池包制造', description: '电池包的自动化制造和组装技术', icon: Settings, color: 'from-indigo-500 to-indigo-600' },
   }
 
-  const currentCategory = categoryInfo[categoryId.toUpperCase() as keyof typeof categoryInfo]
+  const category = categoryInfo[categoryId.toUpperCase() as keyof typeof categoryInfo]
   
-  if (!currentCategory) {
+  if (!category) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
@@ -73,10 +79,10 @@ export default function CategoryDetailPage() {
     )
   }
 
-  const Icon = currentCategory.icon
+  const Icon = category.icon
 
   // Filtering and sorting logic
-  const filteredRepositories = mockRepositories
+  const categoryProjects = mockRepositories
     .filter(repo => {
       if (repo.category.toUpperCase() !== categoryId.toUpperCase()) return false;
       const matchesSearch = !searchQuery || 
@@ -119,26 +125,17 @@ export default function CategoryDetailPage() {
       </motion.div>
 
       {/* Category Header */}
-      <motion.header 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative overflow-hidden rounded-2xl border border-border/40 bg-background/80 p-8"
-      >
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${currentCategory.color} flex-shrink-0`}>
-            <Icon className="h-8 w-8 text-white" />
+      <header className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-8 dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/50">
+            <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="flex-grow">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-              {currentCategory.name}
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              {currentCategory.description}
-            </p>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">{category.name}</h1>
+            <p className="mt-1 text-slate-500 dark:text-slate-400">{category.description}</p>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* Search and Filter */}
       <motion.div
@@ -179,64 +176,10 @@ export default function CategoryDetailPage() {
       </motion.div>
 
       {/* Repositories List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRepositories.length > 0 ? (
-          filteredRepositories.map((repo, index) => (
-            <motion.div
-              key={repo.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="h-full"
-            >
-              <Card className="flex flex-col h-full bg-background/80 backdrop-blur-sm border-border/40 hover:border-border/80 hover:bg-background/90 transition-all duration-300 group">
-                 <CardHeader className="flex-row items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg font-bold">
-                        <Link href={repo.url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                          {repo.name}
-                        </Link>
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">{repo.owner}</p>
-                    </div>
-                    <Link href={repo.url} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                      <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </Link>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3 h-[60px]">{repo.description}</p>
-                    <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4" />
-                        <span>{repo.stars.toLocaleString()}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <GitFork className="h-4 w-4" />
-                        <span>{repo.forks.toLocaleString()}</span>
-                      </div>
-                       <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>{formatDate(repo.lastUpdate)}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex flex-wrap gap-2 pt-4 border-t border-border/40">
-                    {repo.topics.slice(0, 4).map((topic) => (
-                      <Badge key={topic} variant="outline" className="font-normal">
-                        {topic}
-                      </Badge>
-                    ))}
-                  </CardFooter>
-              </Card>
-            </motion.div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-12">
-            <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-2 text-xl font-semibold text-foreground">没有找到匹配的项目</h3>
-            <p className="mt-1 text-muted-foreground">尝试调整您的搜索词。</p>
-          </div>
-        )}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {categoryProjects.map((repo, index) => (
+          <ProjectCard key={repo.id} repo={repo} index={index} />
+        ))}
       </div>
     </div>
   )
