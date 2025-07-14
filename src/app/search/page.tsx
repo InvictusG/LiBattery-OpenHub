@@ -45,19 +45,26 @@ function SearchPageContent() {
   )
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      <aside className="w-full md:w-1/4 lg:w-1/5">
-        <div className="sticky top-24">
-          <h2 className="text-xl font-semibold mb-4">高级搜索</h2>
-          <SearchFilters />
+    <div className="container mx-auto grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-4 lg:grid-cols-5">
+      <aside className="md:col-span-1 lg:col-span-1">
+        <div className="sticky top-20">
+          <h2 className="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-200">
+            <Filter className="mr-2 inline-block h-5 w-5" />
+            Filters
+          </h2>
+          <div className="mt-6">
+            <SearchFilters />
+          </div>
         </div>
       </aside>
-      <main className="w-full md:w-3/4 lg:w-4/5">
-        <h1 className="text-3xl font-bold mb-6">
-          {query ? `搜索结果: "${query}"` : '浏览所有项目'}
+      <div className="md:col-span-3 lg:col-span-4">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+          {query ? `Results for: "${query}"` : 'Explore All Projects'}
         </h1>
-        <SearchResults repositories={filteredRepos} />
-      </main>
+        <div className="mt-6">
+          <SearchResults repositories={filteredRepos} />
+        </div>
+      </div>
     </div>
   )
 }

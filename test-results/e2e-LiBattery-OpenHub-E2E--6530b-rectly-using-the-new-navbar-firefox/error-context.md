@@ -1,35 +1,24 @@
 # Page snapshot
 
 ```yaml
-- navigation:
+- banner:
   - link "LiBattery OpenHub":
     - /url: /
     - img
     - text: LiBattery OpenHub
-  - link "首页":
-    - /url: /
-    - img
-    - text: 首页
-  - link "搜索":
+  - navigation:
+    - link "Home":
+      - /url: /
+    - link "Search":
+      - /url: /search
+    - link "Categories":
+      - /url: /categories
+    - link "Trending":
+      - /url: /trending
+    - link "Contribute":
+      - /url: /contribute
+  - link:
     - /url: /search
-    - img
-    - text: 搜索
-  - link "分类":
-    - /url: /categories
-    - img
-    - text: 分类
-  - link "热门":
-    - /url: /trending
-    - img
-    - text: 热门
-  - link "贡献":
-    - /url: /contribute
-    - img
-    - text: 贡献
-  - button "切换主题":
-    - img
-  - link "GitHub":
-    - /url: https://github.com/your-username/libattery-openhub
     - img
 - main:
   - heading "技术分类" [level=1]
@@ -147,68 +136,46 @@
     - /url: /
     - img
     - text: LiBattery OpenHub
-  - paragraph: 锂离子电池开源资源聚合平台，为全球电池技术工作者提供最新的开源项目、工具和研究资源。
-  - link "GitHub":
-    - /url: https://github.com/your-username/libattery-openhub
-    - img
-  - link "Battery University":
-    - /url: https://batteryuniversity.com
-    - img
-  - link "IEEE Xplore":
-    - /url: https://ieeexplore.ieee.org
-    - img
-  - heading "资源导航" [level=3]
+  - paragraph: The central hub for open-source lithium battery innovation.
+  - heading "Product" [level=3]
   - list:
     - listitem:
-      - link "项目搜索":
+      - link "Explore":
         - /url: /search
     - listitem:
-      - link "分类浏览":
+      - link "Categories":
         - /url: /categories
     - listitem:
-      - link "热门项目":
+      - link "Trending":
         - /url: /trending
     - listitem:
-      - link "API 文档":
-        - /url: /docs
-  - heading "社区参与" [level=3]
-  - list:
-    - listitem:
-      - link "贡献指南":
+      - link "Contribute":
         - /url: /contribute
-    - listitem:
-      - link "问题反馈":
-        - /url: /feedback
-    - listitem:
-      - link "社区讨论":
-        - /url: /discussions
-    - listitem:
-      - link "开发者":
-        - /url: /developers
-  - heading "关于平台" [level=3]
+  - heading "Community" [level=3]
   - list:
     - listitem:
-      - link "关于我们":
-        - /url: /about
+      - link "GitHub":
+        - /url: "#"
     - listitem:
-      - link "使用条款":
-        - /url: /terms
+      - link "Discord":
+        - /url: "#"
     - listitem:
-      - link "隐私政策":
-        - /url: /privacy
+      - link "Twitter":
+        - /url: "#"
     - listitem:
-      - link "联系我们":
-        - /url: /contact
-  - text: © 2025 LiBattery OpenHub. Built with
-  - img
-  - text: for the battery community Powered by
-  - link "Next.js":
-    - /url: https://nextjs.org
-  - text: •
-  - link "Tailwind CSS":
-    - /url: https://tailwindcss.com
-  - text: •
-  - link "Vercel":
-    - /url: https://vercel.com
+      - link "Blog":
+        - /url: "#"
+  - heading "Legal" [level=3]
+  - list:
+    - listitem:
+      - link "Terms of Service":
+        - /url: "#"
+    - listitem:
+      - link "Privacy Policy":
+        - /url: "#"
+    - listitem:
+      - link "License":
+        - /url: "#"
+  - paragraph: © 2025 LiBattery OpenHub. All rights reserved.
 - alert
 ```

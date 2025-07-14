@@ -1,0 +1,350 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - link "LiBattery OpenHub":
+    - /url: /
+    - img
+    - text: LiBattery OpenHub
+  - navigation:
+    - link "Home":
+      - /url: /
+    - link "Search":
+      - /url: /search
+    - link "Categories":
+      - /url: /categories
+    - link "Trending":
+      - /url: /trending
+    - link "Contribute":
+      - /url: /contribute
+  - link:
+    - /url: /search
+    - img
+- main:
+  - complementary:
+    - heading "Filters" [level=2]:
+      - img
+      - text: Filters
+    - img
+    - heading "筛选器" [level=3]
+    - text: 分类
+    - combobox:
+      - option "全部分类" [selected]
+      - option "电芯设计"
+      - option "寿命预测"
+      - option "BMS系统"
+      - option "模拟工具"
+      - option "热管理"
+      - option "安全监控"
+      - option "材料科学"
+      - option "制造工艺"
+      - option "测试工具"
+      - option "数据分析"
+      - option "数学建模"
+      - option "优化算法"
+    - text: 编程语言
+    - combobox:
+      - option "全部语言" [selected]
+      - option "Python"
+      - option "MATLAB"
+      - option "C++"
+      - option "Julia"
+      - option "R"
+      - option "JavaScript"
+      - option "Java"
+    - text: 最小星标数
+    - spinbutton
+    - text: 许可证
+    - combobox:
+      - option "不限" [selected]
+      - option "有许可证"
+      - option "无许可证"
+  - heading "Explore All Projects" [level=1]
+  - paragraph: bms-community
+  - heading "BMS-Master" [level=3]
+  - link:
+    - /url: https://github.com/bms-community/BMS-Master
+    - img
+  - paragraph: An advanced Battery Management System for Li-ion.
+  - img
+  - text: 1,500
+  - img
+  - text: 300 BMS
+  - img
+  - text: bms
+  - img
+  - text: li-ion
+  - img
+  - text: embedded
+  - paragraph: pybamm-team
+  - heading "PyBaMM" [level=3]
+  - link:
+    - /url: https://github.com/pybamm-team/PyBaMM
+    - img
+  - paragraph: Python Battery Mathematical Modelling (PyBaMM) for simulating battery models.
+  - img
+  - text: 2,100
+  - img
+  - text: 450 CELL_DESIGN
+  - img
+  - text: python
+  - img
+  - text: simulation
+  - img
+  - text: electrochemistry
+  - paragraph: e-chem
+  - heading "Electrolyte-DB" [level=3]
+  - link:
+    - /url: https://github.com/e-chem/Electrolyte-DB
+    - img
+  - paragraph: A database of electrolyte properties for battery research.
+  - img
+  - text: "450"
+  - img
+  - text: 90 MATERIALS
+  - img
+  - text: database
+  - img
+  - text: materials-science
+  - img
+  - text: electrochemistry
+  - paragraph: recycle-ai
+  - heading "Battery-Recycle-Net" [level=3]
+  - link:
+    - /url: https://github.com/recycle-ai/Battery-Recycle-Net
+    - img
+  - paragraph: Deep learning models for identifying recyclable battery components.
+  - img
+  - text: "600"
+  - img
+  - text: 120 RECYCLING
+  - img
+  - text: deep-learning
+  - img
+  - text: recycling
+  - img
+  - text: sustainability
+  - paragraph: open-bms
+  - heading "Open-BMS-Firmware" [level=3]
+  - link:
+    - /url: https://github.com/open-bms/Open-BMS-Firmware
+    - img
+  - paragraph: Open source firmware for various BMS hardware.
+  - img
+  - text: 1,200
+  - img
+  - text: 250 BMS
+  - img
+  - text: firmware
+  - img
+  - text: bms
+  - img
+  - text: c++
+  - paragraph: cell-gurus
+  - heading "Cell-Analyzer" [level=3]
+  - link:
+    - /url: https://github.com/cell-gurus/Cell-Analyzer
+    - img
+  - paragraph: Tools for analyzing battery cell test data.
+  - img
+  - text: "300"
+  - img
+  - text: 75 TESTING
+  - img
+  - text: testing
+  - img
+  - text: data-analysis
+  - img
+  - text: python
+  - paragraph: simban-dev
+  - heading "SimBAn" [level=3]
+  - link:
+    - /url: https://github.com/simban-dev/SimBAn
+    - img
+  - paragraph: A Simulink-based Battery Analysis tool for performance evaluation.
+  - img
+  - text: "180"
+  - img
+  - text: 50 TESTING
+  - img
+  - text: simulink
+  - img
+  - text: battery-testing
+  - img
+  - text: matlab
+  - paragraph: NREL
+  - heading "batpaq" [level=3]
+  - link:
+    - /url: https://github.com/NREL/batpaq
+    - img
+  - paragraph: A tool for creating and analyzing battery pack geometries.
+  - img
+  - text: "250"
+  - img
+  - text: 60 PACK_MANUFACTURING
+  - img
+  - text: battery-pack
+  - img
+  - text: design
+  - img
+  - text: thermal-analysis
+  - paragraph: ECSHackWeek
+  - heading "impedance.py" [level=3]
+  - link:
+    - /url: https://github.com/ECSHackWeek/impedance.py
+    - img
+  - paragraph: A Python library for analyzing electrochemical impedance spectroscopy (EIS) data.
+  - img
+  - text: "410"
+  - img
+  - text: 120 TESTING
+  - img
+  - text: eis
+  - img
+  - text: electrochemistry
+  - img
+  - text: python
+  - paragraph: zhangjinpeng87
+  - heading "OpenBESS" [level=3]
+  - link:
+    - /url: https://github.com/zhangjinpeng87/OpenBESS
+    - img
+  - paragraph: BigData and ML empowered intelligent battery energy storage system.
+  - img
+  - text: "150"
+  - img
+  - text: 40 BMS
+  - img
+  - text: bess
+  - img
+  - text: big-data
+  - img
+  - text: machine-learning
+  - paragraph: research-hub
+  - heading "Li-Ion-Battery-Research" [level=3]
+  - link:
+    - /url: https://github.com/research-hub/Li-Ion-Battery-Research
+    - img
+  - paragraph: Collection of research papers and models on Li-Ion batteries.
+  - img
+  - text: "80"
+  - img
+  - text: 25 MATERIALS
+  - img
+  - text: research
+  - img
+  - text: li-ion
+  - img
+  - text: materials-science
+  - paragraph: second-life-bms
+  - heading "Second-Life-BMS" [level=3]
+  - link:
+    - /url: https://github.com/second-life-bms/Second-Life-BMS
+    - img
+  - paragraph: BMS designed for second-life battery applications in energy storage.
+  - img
+  - text: "320"
+  - img
+  - text: 80 RECYCLING
+  - img
+  - text: second-life-battery
+  - img
+  - text: bms
+  - img
+  - text: energy-storage
+  - paragraph: cathode-designers
+  - heading "Cathode-Design-Toolkit" [level=3]
+  - link:
+    - /url: https://github.com/cathode-designers/Cathode-Design-Toolkit
+    - img
+  - paragraph: Computational tools for designing next-generation cathode materials.
+  - img
+  - text: "210"
+  - img
+  - text: 55 CELL_DESIGN
+  - img
+  - text: cathode
+  - img
+  - text: materials-design
+  - img
+  - text: simulation
+  - paragraph: ennoid
+  - heading "ENNOID-BMS" [level=3]
+  - link:
+    - /url: https://github.com/ennoid/ENNOID-BMS
+    - img
+  - paragraph: High performance, modular and open source BMS for various applications.
+  - img
+  - text: "580"
+  - img
+  - text: 150 BMS
+  - img
+  - text: bms
+  - img
+  - text: modular
+  - img
+  - text: high-performance
+  - paragraph: thermal-sim
+  - heading "Thermal-Modeling-Framework" [level=3]
+  - link:
+    - /url: https://github.com/thermal-sim/Thermal-Modeling-Framework
+    - img
+  - paragraph: A framework for thermal modeling and simulation of battery packs.
+  - img
+  - text: "190"
+  - img
+  - text: 45 PACK_MANUFACTURING
+  - img
+  - text: thermal-modeling
+  - img
+  - text: simulation
+  - img
+  - text: battery-pack
+- contentinfo:
+  - link "LiBattery OpenHub":
+    - /url: /
+    - img
+    - text: LiBattery OpenHub
+  - paragraph: The central hub for open-source lithium battery innovation.
+  - heading "Product" [level=3]
+  - list:
+    - listitem:
+      - link "Explore":
+        - /url: /search
+    - listitem:
+      - link "Categories":
+        - /url: /categories
+    - listitem:
+      - link "Trending":
+        - /url: /trending
+    - listitem:
+      - link "Contribute":
+        - /url: /contribute
+  - heading "Community" [level=3]
+  - list:
+    - listitem:
+      - link "GitHub":
+        - /url: "#"
+    - listitem:
+      - link "Discord":
+        - /url: "#"
+    - listitem:
+      - link "Twitter":
+        - /url: "#"
+    - listitem:
+      - link "Blog":
+        - /url: "#"
+  - heading "Legal" [level=3]
+  - list:
+    - listitem:
+      - link "Terms of Service":
+        - /url: "#"
+    - listitem:
+      - link "Privacy Policy":
+        - /url: "#"
+    - listitem:
+      - link "License":
+        - /url: "#"
+  - paragraph: © 2025 LiBattery OpenHub. All rights reserved.
+- alert
+```

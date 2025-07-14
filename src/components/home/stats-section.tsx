@@ -1,88 +1,90 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { Database, GitBranch, Users, TrendingUp } from 'lucide-react'
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { Database, GitFork, Users, TrendingUp, CheckCircle } from "lucide-react";
+import CountUp from "react-countup";
 
-export function StatsSection() {
-  const stats = [
-    {
-      icon: Database,
-      label: '开源项目',
-      value: '1,200+',
-      description: '涵盖电池技术各个领域',
-      color: 'from-blue-500 to-blue-600',
-    },
-    {
-      icon: GitBranch,
-      label: '总星标数',
-      value: '50K+',
-      description: '社区认可度指标',
-      color: 'from-green-500 to-green-600',
-    },
-    {
-      icon: Users,
-      label: '活跃开发者',
-      value: '5,000+',
-      description: '全球电池技术专家',
-      color: 'from-purple-500 to-purple-600',
-    },
-    {
-      icon: TrendingUp,
-      label: '月度更新',
-      value: '300+',
-      description: '项目持续活跃',
-      color: 'from-orange-500 to-orange-600',
-    },
-  ]
+const stats = [
+  {
+    icon: Database,
+    value: 1200,
+    label: "Open Source Projects",
+    suffix: "+",
+  },
+  {
+    icon: GitFork,
+    value: 50,
+    label: "Total Stars",
+    suffix: "K+",
+  },
+  {
+    icon: Users,
+    value: 5,
+    label: "Active Experts",
+    suffix: "K+",
+  },
+  {
+    icon: TrendingUp,
+    value: 300,
+    label: "Monthly Updates",
+    suffix: "+",
+  },
+];
+
+const AnimatedStat = ({ stat }: { stat: typeof stats[0] }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const Icon = stat.icon;
 
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            平台数据概览
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            汇聚全球锂离子电池开源生态系统的核心数据
-          </p>
-        </motion.div>
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5 }}
+      className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-center dark:border-slate-800 dark:bg-slate-900"
+    >
+      <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-br from-blue-50/50 to-transparent opacity-50 dark:from-blue-900/20"></div>
+      <div className="relative">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50">
+          <Icon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+        </div>
+        <div className="text-4xl font-bold tracking-tighter text-slate-900 dark:text-white">
+          <CountUp
+            start={0}
+            end={isInView ? stat.value : 0}
+            duration={2.5}
+            separator=","
+          />
+          {stat.suffix}
+        </div>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+          {stat.label}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 dark:border-gray-700"
-              >
-                <div className={`w-16 h-16 bg-gradient-to-br ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
-                  <Icon className="h-8 w-8 text-white" />
-                </div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {stat.label}
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {stat.description}
-                </div>
-              </motion.div>
-            )
-          })}
+export function StatsSection() {
+  return (
+    <section className="bg-slate-50 py-20 dark:bg-slate-900/50">
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+            Powering a Global Battery Ecosystem
+          </h2>
+          <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
+            A central hub for data, tools, and expertise in battery technology.
+          </p>
+        </div>
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <AnimatedStat key={stat.label} stat={stat} />
+          ))}
         </div>
       </div>
     </section>
-  )
+  );
 } 
