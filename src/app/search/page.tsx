@@ -20,6 +20,15 @@ interface StatsData {
   uniqueCategories: { id: string; name: string }[];
 }
 
+// The data structure returned by our /api/repositories endpoint
+interface RepositoriesData {
+  repositories: Repository[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+
 function SearchPageContent() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
@@ -65,7 +74,7 @@ function SearchPageContent() {
     return `/api/repositories?${params.toString()}`
   }, [query, filters, sort, page, uniqueCategories])
 
-  const { data: apiResponse, error: searchError, isLoading } = useSWR<ApiResponse<{repositories: Repository[]}>>(apiUrl, fetcher, {
+  const { data: apiResponse, error: searchError, isLoading } = useSWR<ApiResponse<RepositoriesData>>(apiUrl, fetcher, {
     keepPreviousData: true,
   })
 
@@ -104,6 +113,17 @@ function SearchPageContent() {
           </p>
         </div>
       )
+    }
+    
+    if (!apiResponse.data?.repositories || apiResponse.data.repositories.length === 0) {
+      return (
+        <div className="text-center py-12 col-span-full">
+          <h3 className="text-2xl font-semibold text-slate-700 dark:text-slate-300">No Results Found</h3>
+          <p className="mt-2 text-slate-500 dark:text-slate-400">
+            Try adjusting your search query or filters.
+          </p>
+        </div>
+      );
     }
 
     return <SearchResults repositories={apiResponse.data.repositories} />
@@ -155,7 +175,7 @@ function SearchPageContent() {
           >
             <Pagination 
               currentPage={page}
-              totalPages={apiResponse.data.totalPages}
+              totalPages={apiResponse.data?.totalPages || 1}
               onPageChange={setPage}
             />
           </motion.div>

@@ -49,12 +49,12 @@ export default function CategoryClientPage({ category }: CategoryClientPageProps
       <div className="flex min-h-[60vh] items-center justify-center text-center">
         <div>
           <Package className="mx-auto h-12 w-12 text-slate-400" />
-          <h1 className="mt-4 text-2xl font-bold">Category Not Found</h1>
-          <p className="mt-2 text-slate-500">The category you are looking for does not exist.</p>
+          <h1 className="mt-4 text-2xl font-bold">分类未找到</h1>
+          <p className="mt-2 text-slate-500">您正在寻找的分类不存在。</p>
           <Button asChild className="mt-6">
             <Link href="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
+              返回首页
             </Link>
           </Button>
         </div>
@@ -68,7 +68,7 @@ export default function CategoryClientPage({ category }: CategoryClientPageProps
         <Button variant="ghost" asChild>
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
+            返回首页
           </Link>
         </Button>
       </motion.div>
@@ -93,20 +93,20 @@ export default function CategoryClientPage({ category }: CategoryClientPageProps
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search in this category..."
+              placeholder="在此分类中搜索..."
               className="w-full pl-10"
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Sort by:</span>
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">排序方式:</span>
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder="排序" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="stars">Stars</SelectItem>
-                <SelectItem value="forks">Forks</SelectItem>
-                <SelectItem value="updated">Last Updated</SelectItem>
+                <SelectItem value="stars">星标数</SelectItem>
+                <SelectItem value="forks">Fork数</SelectItem>
+                <SelectItem value="updated">最近更新</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="ghost" size="icon" onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}>
@@ -123,14 +123,14 @@ export default function CategoryClientPage({ category }: CategoryClientPageProps
       ) : error ? (
         <div className="col-span-full py-12 text-center text-red-500">
           <Package className="mx-auto h-12 w-12" />
-          <h3 className="mt-2 text-xl font-semibold">Failed to load projects.</h3>
-          <p className="mt-1 text-sm">{error.message || 'Please try again later.'}</p>
+          <h3 className="mt-2 text-xl font-semibold">项目加载失败。</h3>
+          <p className="mt-1 text-sm">{error.message || '请稍后再试。'}</p>
         </div>
       ) : projects.length === 0 ? (
         <div className="col-span-full py-12 text-center">
            <Package className="mx-auto h-12 w-12 text-slate-400" />
-           <h3 className="mt-2 text-xl font-semibold text-slate-700 dark:text-slate-200">No Matching Projects</h3>
-           <p className="mt-1 text-slate-500 dark:text-slate-400">Try adjusting your search query.</p>
+           <h3 className="mt-2 text-xl font-semibold text-slate-700 dark:text-slate-200">未找到匹配的项目</h3>
+           <p className="mt-1 text-slate-500 dark:text-slate-400">请尝试调整您的搜索条件。</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
