@@ -34,10 +34,13 @@ export const ProjectCard = ({ repo, index }: ProjectCardProps) => {
       viewport={{ once: true }}
       className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
     >
+      {/* Clickable overlay link */}
+      <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-0" aria-label={`View ${repo.name} on GitHub`}></Link>
+
       {/* Animated glow effect on hover */}
       <div className="absolute -inset-px rounded-xl opacity-0 transition-all duration-300 group-hover:opacity-100 dark:[background:radial-gradient(400px_at_50%_50%,rgba(29,78,216,0.15),transparent_80%)]" />
       
-      <div className="flex h-full flex-col">
+      <div className="relative z-10 flex h-full flex-col">
         <div className="flex-grow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -46,7 +49,7 @@ export const ProjectCard = ({ repo, index }: ProjectCardProps) => {
                 {repo.name}
               </h3>
             </div>
-            <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="ml-4 flex-shrink-0">
+            <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="relative z-20 ml-4 flex-shrink-0">
               <ExternalLink className="h-5 w-5 text-slate-400 transition-colors duration-300 group-hover:text-slate-700 dark:group-hover:text-slate-200" />
             </Link>
           </div>

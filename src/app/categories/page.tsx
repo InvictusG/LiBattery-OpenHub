@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { motion } from 'framer-motion';
@@ -48,7 +50,7 @@ const CategoryItem = ({ category, index }: { category: typeof categories[0], ind
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{category.description}</p>
         </div>
         <div className="mt-4 flex items-center text-sm font-medium text-blue-600 transition-transform duration-200 group-hover:translate-x-1 dark:text-blue-500">
-          Explore
+          浏览项目
           <ArrowRight className="ml-1.5 h-4 w-4" />
         </div>
       </Link>
@@ -66,10 +68,10 @@ export default function CategoriesPage() {
         className="mb-12 text-center"
       >
         <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-          Explore by Category
+          按分类浏览
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400">
-          Dive into specific fields of battery technology. Each category aggregates relevant open-source projects for your convenience.
+          深入探索电池技术的特定领域。每个分类都汇集了相关的开源项目，方便您的研究。
         </p>
       </motion.header>
       
