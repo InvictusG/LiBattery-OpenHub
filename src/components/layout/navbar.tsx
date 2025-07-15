@@ -60,11 +60,11 @@ export default function Navbar() {
   }, []);
   
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Search", href: "/search" },
-    { name: "Categories", href: "/categories" },
-    { name: "Trending", href: "/trending" },
-    { name: "Contribute", href: "/contribute" },
+    { name: "首页", href: "/" },
+    { name: "探索", href: "/search" },
+    { name: "分类", href: "/categories" },
+    { name: "趋势", href: "/trending" },
+    { name: "贡献", href: "/contribute" },
   ];
 
   return (
