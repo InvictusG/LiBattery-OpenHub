@@ -10,44 +10,65 @@ import { SearchFilters } from '@/components/search/search-filters'
 import { SearchResults } from '@/components/search/search-results'
 import { Pagination } from '@/components/search/pagination'
 import { SortControl } from '@/components/search/sort-control'
-import type { Repository, ApiResponse } from '@/types'
+import type { Repository, ApiResponse, Category } from '@/types'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
+
+// A type for the data returned from our new /api/stats endpoint
+interface StatsData {
+  uniqueLanguages: string[];
+  uniqueCategories: { id: string; name: string }[];
+}
 
 function SearchPageContent() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
-
+  
   const [query, setQuery] = useState(initialQuery)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState({
-    category: '',
-    language: '',
+    category: searchParams.get('category') || '',
+    language: searchParams.get('language') || '',
     minStars: '',
     hasLicense: '',
   });
   const [sort, setSort] = useState({ sortBy: 'stars', sortOrder: 'desc' })
 
+  // Fetch dynamic filter options (languages, categories)
+  const { data: statsData, error: statsError } = useSWR<ApiResponse<StatsData>>('/api/stats', fetcher);
+
+  // Memoize the filter options
+  const { uniqueCategories, uniqueLanguages } = useMemo(() => ({
+    uniqueCategories: statsData?.data?.uniqueCategories || [],
+    uniqueLanguages: statsData?.data?.uniqueLanguages || [],
+  }), [statsData]);
+
   const apiUrl = useMemo(() => {
     const params = new URLSearchParams()
-    if (query) params.append('q', query)
-    if (filters.category) params.append('category', filters.category)
-    if (filters.language) params.append('language', filters.language)
-    if (filters.minStars) params.append('minStars', filters.minStars)
-    if (filters.hasLicense) params.append('hasLicense', filters.hasLicense)
-    params.append('sortBy', sort.sortBy)
-    params.append('sortOrder', sort.sortOrder)
+    
+    // Build query: combine main query and category filter for GitHub API
+    let combinedQuery = query;
+    if (filters.category) {
+      // Find the category name from the ID for a better search experience
+      const categoryName = uniqueCategories.find(c => c.id === filters.category)?.name.split('(')[0].trim();
+      combinedQuery = `${categoryName || filters.category} ${query}`.trim();
+    }
+    
+    if (combinedQuery) params.append('q', combinedQuery)
+    if (filters.language) params.append('language', `language:${filters.language}`) // Correct syntax for GitHub API
+    if (filters.minStars) params.append('stars', `>${filters.minStars}`)
+    
+    params.append('sort', sort.sortBy)
+    params.append('order', sort.sortOrder)
     params.append('page', page.toString())
-    params.append('limit', '12') // Show 12 results per page
+    params.append('per_page', '12') // Show 12 results per page
     return `/api/repositories?${params.toString()}`
-  }, [query, filters, sort, page])
+  }, [query, filters, sort, page, uniqueCategories])
 
-  const { data: apiResponse, error, isLoading } = useSWR<ApiResponse>(apiUrl, fetcher, {
+  const { data: apiResponse, error: searchError, isLoading } = useSWR<ApiResponse<{repositories: Repository[]}>>(apiUrl, fetcher, {
     keepPreviousData: true,
   })
 
-  // This is a debounced search handler, but for simplicity, we'll implement instant search for now.
-  // A real-world app would benefit from debouncing this.
   useEffect(() => {
     setQuery(initialQuery)
   }, [initialQuery])
@@ -61,16 +82,6 @@ function SearchPageContent() {
     setPage(1) // Reset to first page on sort change
     setSort({ sortBy, sortOrder })
   }
-
-  // Memoize to prevent re-extracting on every render
-  const { uniqueCategories, uniqueLanguages } = useMemo(() => {
-    // In a real app, these would come from an API endpoint, not be hardcoded or derived.
-    // For now, let's assume they are static or fetched separately.
-    return { 
-      uniqueCategories: ['bms', 'simulation', 'thermal', 'safety', 'materials', 'data_analysis', 'cell_design', 'life_prediction', 'manufacturing', 'testing', 'modeling', 'optimization', 'other' ], 
-      uniqueLanguages: ['Python', 'MATLAB', 'Julia', 'C++', 'JavaScript', 'Java', 'R', 'C#']
-    }
-  }, []);
   
   const renderContent = () => {
     if (isLoading) {
@@ -81,7 +92,7 @@ function SearchPageContent() {
       )
     }
 
-    if (error || !apiResponse?.success) {
+    if (searchError || !apiResponse?.success) {
       return (
         <div className="text-center py-12 col-span-full bg-red-50 dark:bg-red-900/20 rounded-lg">
           <ServerCrash className="mx-auto h-12 w-12 text-red-500" />
@@ -108,6 +119,7 @@ function SearchPageContent() {
               onFilterChange={handleFilterChange}
               categories={uniqueCategories}
               languages={uniqueLanguages}
+              isLoading={!statsData && !statsError}
             />
           </motion.div>
         </div>
@@ -134,7 +146,7 @@ function SearchPageContent() {
           {renderContent()}
         </motion.div>
 
-        {apiResponse?.data && apiResponse.data.total > 0 && (
+        {apiResponse?.data && apiResponse.data.repositories.length > 0 && (
           <motion.div
             className="mt-8"
             initial={{ opacity: 0 }}
