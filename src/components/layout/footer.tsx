@@ -75,7 +75,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-slate-200 pt-8 text-center text-sm text-slate-500 dark:border-slate-800 sm:text-left">
-          <p>&copy; {new Date().getFullYear()} LiBattery OpenHub. All Rights Reserved. </p>
+          <p>&copy; {new Date().getFullYear()} 锂电池开源中心. 版权所有.</p>
         </div>
       </div>
     </footer>

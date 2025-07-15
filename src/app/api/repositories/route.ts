@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get('page') || '1', 10);
 
   // Construct the GitHub API search query
-  const searchQuery = `q=${encodeURIComponent(q)}+in:name,description,topics&sort=${sort}&order=${order}&per_page=${per_page}&page=${page}`;
+  const searchQuery = `q=${q}+in:name,description,topics&sort=${sort}&order=${order}&per_page=${per_page}&page=${page}`;
   const GITHUB_API_URL = `https://api.github.com/search/repositories?${searchQuery}`;
   
   const token = process.env.GITHUB_TOKEN;

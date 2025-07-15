@@ -106,10 +106,10 @@ function SearchPageContent() {
         <div className="text-center py-12 col-span-full bg-red-50 dark:bg-red-900/20 rounded-lg">
           <ServerCrash className="mx-auto h-12 w-12 text-red-500" />
           <h3 className="mt-2 text-xl font-semibold text-red-700 dark:text-red-300">
-            {apiResponse?.message || 'Failed to load data'}
+            {apiResponse?.message || '数据加载失败'}
           </h3>
           <p className="mt-1 text-red-500 dark:text-red-400">
-            An error occurred while fetching repositories. Please try again later.
+            获取项目存储库时发生错误。请稍后再试。
           </p>
         </div>
       )
@@ -118,9 +118,9 @@ function SearchPageContent() {
     if (!apiResponse.data?.repositories || apiResponse.data.repositories.length === 0) {
       return (
         <div className="text-center py-12 col-span-full">
-          <h3 className="text-2xl font-semibold text-slate-700 dark:text-slate-300">No Results Found</h3>
+          <h3 className="text-2xl font-semibold text-slate-700 dark:text-slate-300">未找到结果</h3>
           <p className="mt-2 text-slate-500 dark:text-slate-400">
-            Try adjusting your search query or filters.
+            请尝试调整您的搜索查询或筛选条件。
           </p>
         </div>
       );
@@ -152,7 +152,7 @@ function SearchPageContent() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4 sm:mb-0">
-            {query ? `Results for: "${query}"` : 'Explore All Projects'}
+            {query ? `“${query}”的搜索结果` : '浏览全部项目'}
           </h1>
           <SortControl sort={sort} onSortChange={handleSortChange} />
         </motion.div>
