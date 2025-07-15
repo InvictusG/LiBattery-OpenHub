@@ -14,7 +14,8 @@ import {
   AlertCircle,
   Info,
   Send,
-  Heart
+  Heart,
+  Loader2
 } from 'lucide-react'
 
 export default function ContributePage() {
@@ -362,192 +363,140 @@ export default function ContributePage() {
 
                   {/* 项目描述 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       项目描述 *
                     </label>
                     <textarea
+                      id="description"
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
                       rows={4}
-                      placeholder="详细描述项目的功能、特点和用途..."
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none ${
-                        errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      }`}
+                      placeholder="详细描述该项目的功能、特点和用途..."
+                      className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.description ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                     />
-                    <div className="flex justify-between items-center mt-1">
-                      {errors.description ? (
-                        <p className="text-sm text-red-500 flex items-center">
-                          <AlertCircle className="h-4 w-4 mr-1" />
-                          {errors.description}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          最少 50 个字符
-                        </p>
-                      )}
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {formData.description.length}/1000
-                      </span>
+                    <div className="flex justify-between items-center text-xs text-gray-500 mt-1">
+                      <p className={`transition-colors ${formData.description.length < 50 ? 'text-red-500' : 'text-gray-500'}`}>
+                        最少 50 个字符 (当前: {formData.description.length})
+                      </p>
+                      {errors.description && <p className="text-red-500">{errors.description}</p>}
                     </div>
                   </div>
 
                   {/* 分类和语言 */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         项目分类 *
                       </label>
                       <select
+                        id="category"
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                          errors.category ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                        }`}
+                        className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                       >
                         <option value="">选择分类</option>
-                        {categories.map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
+                        {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                       </select>
-                      {errors.category && (
-                        <p className="mt-1 text-sm text-red-500 flex items-center">
-                          <AlertCircle className="h-4 w-4 mr-1" />
-                          {errors.category}
-                        </p>
-                      )}
+                      {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
                     </div>
-
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         编程语言 *
                       </label>
                       <select
+                        id="language"
                         name="language"
                         value={formData.language}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                          errors.language ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                        }`}
+                        className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.language ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                       >
                         <option value="">选择语言</option>
-                        {languages.map(lang => (
-                          <option key={lang} value={lang}>{lang}</option>
-                        ))}
+                        {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
                       </select>
-                      {errors.language && (
-                        <p className="mt-1 text-sm text-red-500 flex items-center">
-                          <AlertCircle className="h-4 w-4 mr-1" />
-                          {errors.language}
-                        </p>
-                      )}
+                      {errors.language && <p className="text-red-500 text-xs mt-1">{errors.language}</p>}
                     </div>
                   </div>
 
-                  {/* 标签和许可证 */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        项目标签
-                      </label>
-                      <div className="relative">
-                        <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <input
-                          type="text"
-                          name="topics"
-                          value={formData.topics}
-                          onChange={handleInputChange}
-                          placeholder="machine-learning, battery, simulation"
-                          className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        用逗号分隔多个标签
-                      </p>
-                    </div>
+                  {/* 标签 */}
+                  <div>
+                    <label htmlFor="topics" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      项目标签
+                    </label>
+                    <input
+                      id="topics"
+                      name="topics"
+                      type="text"
+                      value={formData.topics}
+                      onChange={handleInputChange}
+                      placeholder="例如: bms, machine-learning, simulation (用逗号分隔)"
+                      className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    />
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        开源许可证
-                      </label>
-                      <select
-                        name="license"
-                        value={formData.license}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        <option value="">选择许可证</option>
-                        {licenses.map(license => (
-                          <option key={license} value={license}>{license}</option>
-                        ))}
-                      </select>
-                    </div>
+                  {/* 许可证 */}
+                  <div>
+                    <label htmlFor="license" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      开源许可证
+                    </label>
+                    <select
+                      id="license"
+                      name="license"
+                      value={formData.license}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    >
+                      <option value="">选择许可证 (如果适用)</option>
+                      {licenses.map(lic => <option key={lic} value={lic}>{lic}</option>)}
+                    </select>
                   </div>
 
                   {/* 联系邮箱 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       联系邮箱 *
                     </label>
                     <input
-                      type="email"
+                      id="contactEmail"
                       name="contactEmail"
+                      type="email"
                       value={formData.contactEmail}
                       onChange={handleInputChange}
-                      placeholder="your@email.com"
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                        errors.contactEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      }`}
+                      placeholder="您的邮箱地址，用于接收审核结果通知"
+                      className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.contactEmail ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                     />
-                    {errors.contactEmail && (
-                      <p className="mt-1 text-sm text-red-500 flex items-center">
-                        <AlertCircle className="h-4 w-4 mr-1" />
-                        {errors.contactEmail}
-                      </p>
-                    )}
+                    {errors.contactEmail && <p className="text-red-500 text-xs mt-1">{errors.contactEmail}</p>}
                   </div>
 
                   {/* 推荐理由 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label htmlFor="reason" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       推荐理由 *
                     </label>
                     <textarea
+                      id="reason"
                       name="reason"
                       value={formData.reason}
                       onChange={handleInputChange}
                       rows={3}
-                      placeholder="请说明为什么推荐这个项目，它有什么特色或优势..."
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none ${
-                        errors.reason ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      }`}
+                      placeholder="请简要说明您推荐该项目的理由，例如它的创新性、实用性或社区影响力等。"
+                      className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.reason ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                     />
-                    {errors.reason && (
-                      <p className="mt-1 text-sm text-red-500 flex items-center">
-                        <AlertCircle className="h-4 w-4 mr-1" />
-                        {errors.reason}
-                      </p>
-                    )}
+                    {errors.reason && <p className="text-red-500 text-xs mt-1">{errors.reason}</p>}
                   </div>
-
+                  
                   {/* 提交按钮 */}
-                  <div className="pt-6">
+                  <div className="pt-4">
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center"
+                      className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          提交中...
-                        </>
+                        <><Loader2 className="animate-spin h-5 w-5 mr-2" /> 正在提交...</>
                       ) : (
-                        <>
-                          <Send className="h-5 w-5 mr-2" />
-                          提交项目
-                        </>
+                        <><Send className="h-5 w-5 mr-2" /> 提交审核</>
                       )}
                     </button>
                   </div>
@@ -558,5 +507,5 @@ export default function ContributePage() {
         </div>
       </div>
     </div>
-  )
+  );
 } 
