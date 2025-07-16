@@ -8,9 +8,9 @@ export async function GET(request: NextRequest) {
   const since = searchParams.get("since") || "daily";
   const language = searchParams.get("language") || "";
 
-  let apiUrl = `https://trendings.herokuapp.com/repo?since=${since}`;
+  let apiUrl = `https://github-trending-api.wanari.com/repositories?since=${since}`;
   if (language) {
-    apiUrl += `&lang=${encodeURIComponent(language)}`;
+    apiUrl += `&language=${encodeURIComponent(language)}`;
   }
 
   try {
@@ -35,9 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await res.json();
-    // The new API has a slightly different structure
-    const repositories = data.items;
-    return NextResponse.json({ success: true, data: repositories }, { status: 200 });
+    return NextResponse.json({ success: true, data: data }, { status: 200 });
 
   } catch (error) {
     console.error(
