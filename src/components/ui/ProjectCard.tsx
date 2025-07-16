@@ -7,83 +7,90 @@ import { Repository } from "@/types";
 import { cn } from "@/lib/utils";
 
 interface ProjectCardProps {
-  repo: Repository;
-  index: number;
+  repo: any;
+  index?: number;
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.05,
-      duration: 0.3,
-      ease: "easeOut",
-    },
-  }),
-};
+export const ProjectCard: React.FC<ProjectCardProps> = ({ repo, index = 0 }) => {
+  const languageColor = getLanguageColor(repo.language);
 
-export const ProjectCard = ({ repo, index }: ProjectCardProps) => {
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.05,
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  if (!repo) {
+    return null;
+  }
+
+  const ownerLogin = repo.owner?.login || '未知所有者';
+  const ownerAvatar = repo.owner?.avatar_url || 'https://github.com/github.png';
+  const repoName = repo.name || '未知项目';
+  const repoDescription = repo.description || '暂无描述。';
+  const repoUrl = repo.html_url || '#';
+  const stars = repo.stargazers_count ?? 0;
+  const forks = repo.forks_count ?? repo.forks ?? 0;
+  const language = repo.language || '未知';
+  const licenseName = repo.license?.name || '无许可证';
+
   return (
-    <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="block h-full">
-      <motion.div
-        variants={cardVariants}
-        initial="hidden"
-        animate="visible"
-        custom={index}
-        viewport={{ once: true }}
-        className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:border-blue-500 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:border-blue-500"
-      >
-        {/* Animated glow effect on hover */}
-        <div className="absolute -inset-px rounded-xl opacity-0 transition-all duration-300 group-hover:opacity-100 dark:[background:radial-gradient(400px_at_50%_50%,rgba(29,78,216,0.15),transparent_80%)]" />
-        
-        <div className="relative z-10 flex h-full flex-col">
-          <div className="flex-grow">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-blue-600 dark:text-blue-500">{repo.owner.login}</p>
-                <h3 className="mt-1 text-lg font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {repo.name}
-                </h3>
-              </div>
-              <div className="relative z-20 ml-4 flex-shrink-0">
-                <ExternalLink className="h-5 w-5 text-slate-400 transition-colors duration-300 group-hover:text-slate-700 dark:group-hover:text-slate-200" />
-              </div>
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-slate-500 line-clamp-3 dark:text-slate-400">
-              {repo.description}
-            </p>
-          </div>
-          
-          <div className="mt-6">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <Star className="h-4 w-4 text-amber-500" />
-                  {repo.stars.toLocaleString()}
-                </span>
-                <span className="flex items-center gap-1">
-                  <GitFork className="h-4 w-4 text-slate-500" />
-                  {repo.forks.toLocaleString()}
-                </span>
-              </div>
-              <span className="rounded-full bg-slate-100 px-2 py-1 font-mono text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                {repo.category}
-              </span>
-            </div>
-
-            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-4 dark:border-slate-800">
-              {repo.topics.slice(0, 3).map((topic) => (
-                <div key={topic} className="flex items-center gap-1.5 rounded-full bg-slate-50 px-2 py-1 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                  <Tag className="h-3 w-3" />
-                  {topic}
-                </div>
-              ))}
+    <motion.div
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      viewport={{ once: true }}
+      className={cn(
+        "bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out flex flex-col h-full overflow-hidden"
+      )}
+    >
+      <div className="p-6 flex-grow">
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-center gap-3">
+            <img src={ownerAvatar} alt={`${ownerLogin} 的头像`} className="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-slate-700" />
+            <div>
+              <h3 className="text-sm font-semibold text-blue-600 dark:text-blue-400 truncate">
+                {ownerLogin}
+              </h3>
+              <a href={repoUrl} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-slate-800 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                {repoName}
+              </a>
             </div>
           </div>
         </div>
-      </motion.div>
-    </Link>
+
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 h-10 overflow-hidden">
+          {repoDescription}
+        </p>
+      </div>
+      
+      <div className="bg-slate-50 dark:bg-slate-800/50 px-6 py-4 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5" title="语言">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: languageColor }}></div>
+            <span>{language}</span>
+          </div>
+          <div className="flex items-center gap-1" title="Stars">
+            <Star className="w-3.5 h-3.5 text-yellow-500" />
+            <span>{stars.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-1" title="Forks">
+            <GitFork className="w-3.5 h-3.5 text-green-500" />
+            <span>{forks.toLocaleString()}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1" title="许可证">
+          <Scale className="w-3.5 h-3.5" />
+          <span>{licenseName}</span>
+        </div>
+      </div>
+    </motion.div>
   );
 }; 
