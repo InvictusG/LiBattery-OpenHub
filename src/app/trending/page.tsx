@@ -6,9 +6,24 @@ import { motion } from 'framer-motion'
 import useSWR from 'swr'
 import type { Repository, ApiResponse } from '@/types'
 import { ProjectCard } from '@/components/ui/ProjectCard'
-import { Loader2, ServerCrash, Calendar, Github, ExternalLink } from 'lucide-react'
+import { Loader2, ServerCrash, Github } from 'lucide-react'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
+
+const PRESET_LANGUAGES = [
+  "JavaScript",
+  "Python",
+  "Java",
+  "TypeScript",
+  "C#",
+  "C++",
+  "PHP",
+  "Shell",
+  "C",
+  "Ruby",
+  "Go",
+  "Rust"
+];
 
 function TimeRangeButton({ range, currentRange, setRange, label }: { range: string, currentRange: string, setRange: (range: string) => void, label: string }) {
   const isActive = currentRange === range;
@@ -56,7 +71,6 @@ function TrendingPageContent() {
   }
   
   const apiUrl = `/api/trending?${searchParams.toString()}`
-  const { data: languagesResponse } = useSWR('/api/trending/languages', fetcher)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -88,7 +102,7 @@ function TrendingPageContent() {
             className="w-full md:w-64 appearance-none rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
           >
             <option value="">所有语言</option>
-            {languagesResponse?.success && languagesResponse.data.map((lang: string) => (
+            {PRESET_LANGUAGES.map(lang => (
               <option key={lang} value={lang}>{lang}</option>
             ))}
           </select>
@@ -104,7 +118,7 @@ function TrendingPageContent() {
 }
 
 function TrendingResults({ apiUrl }: { apiUrl: string }) {
-  const { data: response, error } = useSWR<ApiResponse<any[]>>(apiUrl, fetcher, {
+  const { data: response, error } = useSWR(apiUrl, fetcher, {
     suspense: true
   });
 
@@ -145,8 +159,8 @@ function TrendingResults({ apiUrl }: { apiUrl: string }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {response.data.map((repo, index) => (
-        <ProjectCard repo={repo} key={repo.url || index} index={index} />
+      {response.data.map((repo: any, index: number) => (
+        <ProjectCard repo={repo} key={repo.id} index={index} />
       ))}
     </div>
   );
