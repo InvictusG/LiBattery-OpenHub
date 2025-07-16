@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import useSWR from 'swr'
 
 import { SearchFilters } from '@/components/search/search-filters'
-import { SearchResults } from '@/components/search/search-results'
+import { SearchResults, SearchResultsSkeleton } from '@/components/search/search-results'
 import { Pagination } from '@/components/search/pagination'
 import { SortControl } from '@/components/search/sort-control'
 import type { Repository, ApiResponse, Category } from '@/types'
@@ -96,12 +96,8 @@ function SearchPageContent() {
   }, [searchParams])
 
   const renderContent = () => {
-    if (isLoading && !apiResponse) { // Show initial loading state
-      return (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
-        </div>
-      )
+    if (isLoading && !apiResponse?.data) {
+      return <SearchResultsSkeleton />
     }
 
     if (searchError || !apiResponse?.success) {

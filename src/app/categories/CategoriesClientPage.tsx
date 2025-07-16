@@ -3,23 +3,37 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { categories } from '@/lib/categories';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { 
+  ArrowRight,
+  BookOpen,
+  BatteryCharging,
+  Cpu,
+  Thermometer,
+  ShieldCheck,
+  FlaskConical,
+  Factory,
+  TestTube,
+  LineChart,
+  BrainCircuit,
+  FunctionSquare,
+  Package,
+} from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
-  bms: BookOpen,
-  cell_design: BookOpen,
-  materials: BookOpen,
-  recycling: BookOpen,
-  testing: BookOpen,
-  pack_manufacturing: BookOpen,
-  life_prediction: BookOpen,
-  simulation: BookOpen,
-  thermal: BookOpen,
-  safety: BookOpen,
-  manufacturing: BookOpen,
-  data_analysis: BookOpen,
-  modeling: BookOpen,
-  optimization: BookOpen,
+  bms: BatteryCharging,
+  cell_design: Package,
+  materials: FlaskConical,
+  recycling: Factory,
+  testing: TestTube,
+  pack_manufacturing: Factory,
+  life_prediction: LineChart,
+  simulation: BrainCircuit,
+  thermal: Thermometer,
+  safety: ShieldCheck,
+  manufacturing: Factory,
+  data_analysis: LineChart,
+  modeling: FunctionSquare,
+  optimization: BrainCircuit,
   other: BookOpen,
 };
 
