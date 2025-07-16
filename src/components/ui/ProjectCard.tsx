@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Star, GitFork, ExternalLink, Tag } from "lucide-react";
+import { Star, GitFork, ExternalLink, Tag, Scale } from "lucide-react";
 import { Repository } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -93,4 +93,30 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ repo, index = 0 }) => 
       </div>
     </motion.div>
   );
+};
+
+const languageColors: { [key: string]: string } = {
+  JavaScript: "#f1e05a",
+  TypeScript: "#3178c6",
+  Python: "#3572A5",
+  Java: "#b07219",
+  Go: "#00ADD8",
+  Rust: "#dea584",
+  "C++": "#f34b7d",
+  C: "#555555",
+  Shell: "#89e051",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+  Ruby: "#701516",
+  PHP: "#4F5D95",
+  Vue: "#41b883",
+  Svelte: "#ff3e00",
+  default: "#6e7681",
+};
+
+const getLanguageColor = (language: string | null): string => {
+  if (language && languageColors[language]) {
+    return languageColors[language];
+  }
+  return languageColors.default;
 }; 
