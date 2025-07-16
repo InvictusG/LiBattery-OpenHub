@@ -66,7 +66,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ repo, index = 0 }) => 
           </div>
         </div>
 
-        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 h-10 overflow-hidden">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 h-auto overflow-hidden line-clamp-2">
           {repoDescription}
         </p>
       </div>
