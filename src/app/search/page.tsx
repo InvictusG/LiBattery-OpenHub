@@ -151,7 +151,7 @@ function SearchPageContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4 sm:mb-0">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4 sm:mb-0">
             {query ? `“${query}”的搜索结果` : '浏览全部项目'}
           </h1>
           <SortControl sort={sort} onSortChange={handleSortChange} />

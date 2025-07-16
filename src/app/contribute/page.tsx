@@ -181,27 +181,22 @@ export default function ContributePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* 页面头部 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="flex items-center justify-center mb-4">
-            <Heart className="h-8 w-8 text-red-500 mr-3" />
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              贡献项目
-            </h1>
-          </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            发现了优秀的锂离子电池开源项目？与社区分享，让更多人受益
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
+            分享您的开源项目
+          </h1>
+          <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            发现了一个优秀的锂电池开源项目？与社区分享，让更多人受益。
           </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* 左侧信息面板 */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -338,7 +333,7 @@ export default function ContributePage() {
                   {/* GitHub 链接 */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      GitHub 链接 *
+                      GitHub 仓库链接 *
                     </label>
                     <div className="relative">
                       <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -347,7 +342,7 @@ export default function ContributePage() {
                         name="githubUrl"
                         value={formData.githubUrl}
                         onChange={handleInputChange}
-                        placeholder="https://github.com/username/repository"
+                        placeholder="例如：https://github.com/your-name/your-repo"
                         className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
                           errors.githubUrl ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                         }`}
@@ -361,10 +356,10 @@ export default function ContributePage() {
                     )}
                   </div>
 
-                  {/* 项目描述 */}
+                  {/* 项目简介 */}
                   <div>
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      项目描述 *
+                      项目简介 *
                     </label>
                     <textarea
                       id="description"
@@ -372,7 +367,7 @@ export default function ContributePage() {
                       value={formData.description}
                       onChange={handleInputChange}
                       rows={4}
-                      placeholder="详细描述该项目的功能、特点和用途..."
+                      placeholder="详细描述这个项目是做什么的，特点和优势等。"
                       className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.description ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                     />
                     <div className="flex justify-between items-center text-xs text-gray-500 mt-1">
@@ -422,7 +417,7 @@ export default function ContributePage() {
                   {/* 标签 */}
                   <div>
                     <label htmlFor="topics" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      项目标签
+                      技术标签 (可选, 英文逗号分隔)
                     </label>
                     <input
                       id="topics"
@@ -430,7 +425,7 @@ export default function ContributePage() {
                       type="text"
                       value={formData.topics}
                       onChange={handleInputChange}
-                      placeholder="例如: bms, machine-learning, simulation (用逗号分隔)"
+                      placeholder="例如: bms, machine-learning, simulation"
                       className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
                   </div>
@@ -480,7 +475,7 @@ export default function ContributePage() {
                       value={formData.reason}
                       onChange={handleInputChange}
                       rows={3}
-                      placeholder="请简要说明您推荐该项目的理由，例如它的创新性、实用性或社区影响力等。"
+                      placeholder="您为什么推荐这个项目？它解决了什么关键问题？有何独特之处？"
                       className={`w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.reason ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                     />
                     {errors.reason && <p className="text-red-500 text-xs mt-1">{errors.reason}</p>}

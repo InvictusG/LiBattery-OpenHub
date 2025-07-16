@@ -3,15 +3,22 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/navbar"; // Corrected: Default import
 import { Footer } from "@/components/layout/footer";
+import { Metadata } from "next";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 })
 
-export const metadata = {
-  title: "LiBattery OpenHub",
-  description: "A curated list of open-source projects for the lithium battery industry.",
+export const metadata: Metadata = {
+  title: {
+    default: "LiBattery OpenHub - 锂电池开源中心",
+    template: `%s | LiBattery OpenHub`,
+  },
+  description: "一个发现、分析和贡献未来电池技术的中心枢纽。",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

@@ -1,83 +1,77 @@
 "use client";
 
-import Link from "next/link";
-import { Sparkles } from "lucide-react";
-
-const footerNavs = [
-  {
-    label: "产品",
-    items: [
-      { href: "/search", name: "探索" },
-      { href: "/categories", name: "分类" },
-      { href: "/trending", name: "趋势" },
-      { href: "/contribute", name: "贡献" },
-    ],
-  },
-  {
-    label: "社区",
-    items: [
-      { href: "https://github.com/InvictusG/LiBattery-OpenHub", name: "GitHub" },
-      { href: "#", name: "Discord (即将推出)" },
-      { href: "#", name: "Twitter (即将推出)" },
-    ],
-  },
-  {
-    label: "法律",
-    items: [
-      { href: "#", name: "服务条款" },
-      { href: "#", name: "隐私政策" },
-      { href: "#", name: "项目许可证" },
-    ],
-  },
-];
-
-const Logo = () => (
-  <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-    <Sparkles className="h-6 w-6 text-indigo-500" />
-    <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-slate-100 dark:to-slate-300">
-      锂电池开源中心
-    </span>
-  </Link>
-);
-
+import { Github, Twitter, Send } from "lucide-react";
+import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50">
-      <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-1">
-            <Logo />
-            <p className="mt-4 max-w-xs text-sm text-slate-500 dark:text-slate-400">
-              一个专注于发现、分享和加速锂电池技术创新的开源资源聚合平台。
+    <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="md:col-span-1">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white">
+              LiBattery <span className="text-blue-600">OpenHub</span>
+            </h2>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              探索、学习和贡献锂电池技术的未来。
             </p>
+            <div className="mt-4 flex space-x-4">
+              <a href="#" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-500">
+                <Github className="h-6 w-6" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-500">
+                <Twitter className="h-6 w-6" />
+              </a>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-2">
-            {footerNavs.map((nav) => (
-              <div key={nav.label}>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-200">
-                  {nav.label}
-                </h3>
-                <ul className="mt-4 space-y-3">
-                  {nav.items.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className="text-sm text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-500"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 tracking-wider uppercase">导航</h3>
+              <ul className="mt-4 space-y-2">
+                <li><Link href="/search" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">搜索</Link></li>
+                <li><Link href="/trending" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">热门</Link></li>
+                <li><Link href="/categories" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">分类</Link></li>
+                <li><Link href="/contribute" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">贡献</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 tracking-wider uppercase">资源</h3>
+              <ul className="mt-4 space-y-2">
+                <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">文档</a></li>
+                <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">API</a></li>
+                <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">状态</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 tracking-wider uppercase">法律</h3>
+              <ul className="mt-4 space-y-2">
+                <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">隐私政策</a></li>
+                <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600">服务条款</a></li>
+              </ul>
+            </div>
+            <div className="col-span-2 md:col-span-1">
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 tracking-wider uppercase">订阅更新</h3>
+              <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">获取最新的项目和社区新闻。</p>
+              <form className="mt-4 flex">
+                <input
+                  type="email"
+                  placeholder="您的邮箱地址"
+                  className="w-full appearance-none rounded-l-md border border-r-0 border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                />
+                <button
+                  type="submit"
+                  className="flex-shrink-0 rounded-r-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  <Send className="h-5 w-5" />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-        <div className="mt-12 border-t border-slate-200 pt-8 text-center text-sm text-slate-500 dark:border-slate-800 sm:text-left">
-          <p>&copy; {new Date().getFullYear()} 锂电池开源中心. 版权所有.</p>
+        <div className="mt-12 border-t border-slate-200 dark:border-slate-800 pt-8 text-center text-sm text-slate-500 dark:text-slate-400">
+          <p>&copy; {new Date().getFullYear()} LiBattery OpenHub. 保留所有权利。</p>
         </div>
       </div>
     </footer>
-  );
+  )
 } 
