@@ -104,7 +104,7 @@ function TrendingPageContent() {
 }
 
 function TrendingResults({ apiUrl }: { apiUrl: string }) {
-  const { data: response, error } = useSWR<ApiResponse<Repository[]>>(apiUrl, fetcher, {
+  const { data: response, error } = useSWR<ApiResponse<any[]>>(apiUrl, fetcher, {
     suspense: true
   });
 
@@ -146,7 +146,7 @@ function TrendingResults({ apiUrl }: { apiUrl: string }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {response.data.map((repo, index) => (
-        <ProjectCard repo={repo} key={repo.id || repo.url} index={index} />
+        <ProjectCard repo={repo} key={repo.url || index} index={index} />
       ))}
     </div>
   );
