@@ -125,7 +125,7 @@ function TrendingResults({ apiUrl }: { apiUrl: string }) {
     );
   }
   
-  if (data.data.length === 0) {
+  if (!data || !data.data || data.data.length === 0) {
     return (
       <div className="text-center py-20">
         <h3 className="text-2xl font-semibold text-slate-700 dark:text-slate-300">无结果</h3>
