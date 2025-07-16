@@ -8,12 +8,7 @@ import type { Repository, ApiResponse } from '@/types'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { Loader2, ServerCrash, Calendar, Github, ExternalLink } from 'lucide-react'
 
-const fetcher = (url: string) => fetch(url).then(res => {
-  if (!res.ok) {
-    throw new Error('网络响应错误')
-  }
-  return res.json()
-});
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 function TimeRangeButton({ range, currentRange, setRange, label }: { range: string, currentRange: string, setRange: (range: string) => void, label: string }) {
   const isActive = currentRange === range;
@@ -61,7 +56,7 @@ function TrendingPageContent() {
   }
   
   const apiUrl = `/api/trending?${searchParams.toString()}`
-  const { data: languagesData } = useSWR<string[]>('/api/trending/languages', fetcher)
+  const { data: languagesResponse } = useSWR('/api/trending/languages', fetcher)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -93,7 +88,7 @@ function TrendingPageContent() {
             className="w-full md:w-64 appearance-none rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
           >
             <option value="">所有语言</option>
-            {languagesData?.map(lang => (
+            {languagesResponse?.success && languagesResponse.data.map((lang: string) => (
               <option key={lang} value={lang}>{lang}</option>
             ))}
           </select>
@@ -109,23 +104,35 @@ function TrendingPageContent() {
 }
 
 function TrendingResults({ apiUrl }: { apiUrl: string }) {
-  const { data, error } = useSWR<ApiResponse<Repository[]>>(apiUrl, fetcher, {
-    suspense: true // Enable suspense mode for SWR
+  const { data: response, error } = useSWR<ApiResponse<Repository[]>>(apiUrl, fetcher, {
+    suspense: true
   });
 
-  if (error || !data?.success) {
+  if (error) {
     return (
       <div className="text-center py-10 col-span-full bg-red-50 dark:bg-red-900/20 rounded-lg">
         <ServerCrash className="mx-auto h-12 w-12 text-red-500" />
-        <h3 className="mt-2 text-xl font-semibold text-red-700 dark:text-red-300">获取数据失败</h3>
+        <h3 className="mt-2 text-xl font-semibold text-red-700 dark:text-red-300">网络请求失败</h3>
         <p className="mt-1 text-red-500 dark:text-red-400">
-          {data?.message || '服务器开小差了，请稍后再试。'}
+          请检查您的网络连接或稍后再试。
         </p>
       </div>
     );
   }
   
-  if (!data || !data.data || data.data.length === 0) {
+  if (!response?.success) {
+    return (
+      <div className="text-center py-10 col-span-full bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+        <ServerCrash className="mx-auto h-12 w-12 text-yellow-500" />
+        <h3 className="mt-2 text-xl font-semibold text-yellow-700 dark:text-yellow-300">获取数据失败</h3>
+        <p className="mt-1 text-yellow-500 dark:text-yellow-400">
+          {response?.message || '服务器开小差了，请稍后再试。'}
+        </p>
+      </div>
+    );
+  }
+  
+  if (!response.data || response.data.length === 0) {
     return (
       <div className="text-center py-20">
         <h3 className="text-2xl font-semibold text-slate-700 dark:text-slate-300">无结果</h3>
@@ -138,8 +145,8 @@ function TrendingResults({ apiUrl }: { apiUrl: string }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {data.data.map((repo, index) => (
-        <ProjectCard repo={repo} key={repo.id} index={index} />
+      {response.data.map((repo, index) => (
+        <ProjectCard repo={repo} key={repo.id || repo.url} index={index} />
       ))}
     </div>
   );

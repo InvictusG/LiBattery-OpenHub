@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// This is a proxy route to avoid CORS issues and to potentially add caching in the future.
-// It fetches data from a reliable third-party public API that scrapes GitHub's trending page.
-export async function GET(request: Request) {
+export const dynamic = 'force-dynamic'; // force dynamic behavior
+
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const since = searchParams.get('since') || 'daily';
-  const language = searchParams.get('language');
+  const since = searchParams.get("since") || "daily";
+  const language = searchParams.get("language") || "";
 
   let apiUrl = `https://api.g-trends.vercel.app/repositories?since=${since}`;
   if (language) {
@@ -14,41 +15,40 @@ export async function GET(request: Request) {
 
   try {
     const res = await fetch(apiUrl, {
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: 3600 }, // Cache for 1 hour
     });
-    
+
     if (!res.ok) {
       const errorText = await res.text();
-      console.error(`Error fetching trending repos: ${res.status} ${res.statusText}`, errorText);
-      return NextResponse.json({ success: false, message: `Failed to fetch trending data: ${res.statusText}` }, { status: res.status });
+      console.error(
+        `Error fetching trending data from external API: ${res.status} ${res.statusText}`,
+        errorText
+      );
+      return NextResponse.json(
+        {
+          success: false,
+          message: `获取外部热门数据失败 (状态: ${res.status})`,
+          data: [],
+        },
+        { status: 200 }
+      );
     }
-    
+
     const data = await res.json();
-    
-    // The external API nests the data, so we extract it.
-    const repositories = data.data;
+    return NextResponse.json({ success: true, data: data }, { status: 200 });
 
-    // We need to transform the data slightly to match our existing `Repository` type.
-    const transformedData = repositories.map((repo: any) => ({
-      id: repo.url, // No stable ID, using url
-      name: repo.name,
-      full_name: `${repo.author}/${repo.name}`,
-      owner: {
-        login: repo.author,
-        avatar_url: repo.avatar,
-      },
-      html_url: repo.url,
-      description: repo.description,
-      stars: repo.stars,
-      forks: repo.forks,
-      language: repo.language || 'N/A',
-      category: 'Trending', // Assign a default category
-      topics: repo.tags || [],
-    }));
-
-    return NextResponse.json({ success: true, data: transformedData });
   } catch (error) {
-    console.error('An unexpected error occurred in /api/trending:', error);
-    return NextResponse.json({ success: false, message: 'An unexpected error occurred.' }, { status: 500 });
+    console.error(
+      "An unexpected error occurred in /api/trending:",
+      error
+    );
+    return NextResponse.json(
+      {
+        success: false,
+        message: "服务器发生未知错误。",
+        data: [],
+      },
+      { status: 200 }
+    );
   }
 } 

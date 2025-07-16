@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-// This route fetches the available programming languages for the trending filter.
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const response = await fetch(
@@ -11,21 +12,22 @@ export async function GET() {
     );
 
     if (!response.ok) {
-      // Return an empty array or a default list if the API fails
-      return NextResponse.json([], {
-        status: response.status,
-        statusText: response.statusText,
-      });
+       console.error(`Error fetching trending languages: ${response.status} ${response.statusText}`);
+       return NextResponse.json({ success: false, data: [], message: 'Failed to fetch languages' }, { status: 200 });
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true, data: data });
+
   } catch (error) {
     console.error("Failed to fetch trending languages:", error);
-    // Return an empty array or a default list in case of any exception
-    return NextResponse.json([], {
-      status: 500,
-      statusText: "Internal Server Error",
-    });
+    return NextResponse.json(
+        {
+          success: false,
+          data: [],
+          message: "An unexpected error occurred.",
+        },
+        { status: 200 }
+      );
   }
 } 
