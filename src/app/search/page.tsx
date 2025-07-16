@@ -90,6 +90,13 @@ function SearchPageContent() {
     keepPreviousData: true,
   })
 
+  // GitHub API limit: only first 1000 results are available.
+  // Assuming 30 results per page, the max page is ceil(1000 / 30) = 34.
+  const GITHUB_MAX_PAGES = Math.ceil(1000 / 30);
+  const totalPages = apiResponse?.data?.totalPages || 1;
+  const cappedTotalPages = Math.min(totalPages, GITHUB_MAX_PAGES);
+
+
   useEffect(() => {
     // This effect is no longer needed as query is derived from searchParams
     // setQuery(initialQuery) 
@@ -174,7 +181,7 @@ function SearchPageContent() {
           >
             <Pagination 
               currentPage={page}
-              totalPages={apiResponse.data?.totalPages || 1}
+              totalPages={cappedTotalPages}
               onPageChange={handlePageChange}
             />
           </motion.div>
