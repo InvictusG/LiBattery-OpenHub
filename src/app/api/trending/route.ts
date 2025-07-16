@@ -8,9 +8,9 @@ export async function GET(request: NextRequest) {
   const since = searchParams.get("since") || "daily";
   const language = searchParams.get("language") || "";
 
-  let apiUrl = `https://api.g-trends.vercel.app/repositories?since=${since}`;
+  let apiUrl = `https://trendings.herokuapp.com/repo?since=${since}`;
   if (language) {
-    apiUrl += `&language=${encodeURIComponent(language)}`;
+    apiUrl += `&lang=${encodeURIComponent(language)}`;
   }
 
   try {
@@ -35,7 +35,9 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await res.json();
-    return NextResponse.json({ success: true, data: data }, { status: 200 });
+    // The new API has a slightly different structure
+    const repositories = data.items;
+    return NextResponse.json({ success: true, data: repositories }, { status: 200 });
 
   } catch (error) {
     console.error(

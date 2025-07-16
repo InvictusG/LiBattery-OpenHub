@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const response = await fetch(
-      "https://api.g-trends.vercel.app/languages",
+      "https://trendings.herokuapp.com/lang",
       {
         next: { revalidate: 3600 * 24 }, // 24 hours
       }
@@ -17,7 +17,9 @@ export async function GET() {
     }
 
     const data = await response.json();
-    return NextResponse.json({ success: true, data: data });
+    // The new API provides an array of objects, we need to extract the `name` property
+    const languageNames = data.items.map((lang: { name: string, url:string }) => lang.name);
+    return NextResponse.json({ success: true, data: languageNames });
 
   } catch (error) {
     console.error("Failed to fetch trending languages:", error);
