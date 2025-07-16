@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
+import React, { Suspense, useMemo, useCallback } from 'react'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { 
   TrendingUp, 
@@ -11,10 +11,13 @@ import {
   Filter,
   ArrowUp,
   Loader2,
-  ServerCrash
+  ServerCrash,
+  Calendar,
+  Github
 } from 'lucide-react'
 import useSWR from 'swr'
 import type { Repository, ApiResponse } from '@/types'
+import { ProjectCard } from '@/components/ui/ProjectCard'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -52,76 +55,78 @@ function TrendingListItemSkeleton() {
   );
 }
 
-export default function TrendingPage() {
-  const [timeRange, setTimeRange] = useState('week')
-  const [categoryFilter, setCategoryFilter] = useState('')
-  const [languageFilter, setLanguageFilter] = useState('')
+function TimeRangeButton({ range, currentRange, setRange }: { range: string, currentRange: string, setRange: (range: string) => void }) {
+  const isActive = currentRange === range;
+  return (
+    <button
+      onClick={() => setRange(range)}
+      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+        isActive
+          ? 'bg-blue-500 text-white'
+          : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-600 dark:hover:bg-blue-700'
+      }`}
+    >
+      {range}
+    </button>
+  );
+}
 
-  const { data: statsData, error: statsError } = useSWR<ApiResponse<StatsData>>('/api/stats', fetcher);
-  const categories = statsData?.data?.uniqueCategories || [];
-  const languages = statsData?.data?.uniqueLanguages || [];
+function TrendingPageContent() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const timeRanges = [
-    { value: 'day', label: '今日' },
-    { value: 'week', label: '本周' },
-    { value: 'month', label: '本月' },
-  ]
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+      return params.toString()
+    },
+    [searchParams]
+  )
+  
+  const since = searchParams.get('since') || 'daily'
+  const language = searchParams.get('language') || ''
 
-  const getDateRange = () => {
-    const date = new Date();
-    switch (timeRange) {
-      case 'day':
-        date.setDate(date.getDate() - 1);
-        break;
-      case 'month':
-        date.setMonth(date.getMonth() - 1);
-        break;
-      case 'week':
-      default:
-        date.setDate(date.getDate() - 7);
-        break;
-    }
-    return date.toISOString().split('T')[0];
+  const handleTimeRangeChange = (newRange: string) => {
+    router.push(`${pathname}?${createQueryString('since', newRange)}`, { scroll: false })
+  }
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    router.push(`${pathname}?${createQueryString('language', e.target.value)}`, { scroll: false })
   }
 
   const apiUrl = useMemo(() => {
-    const params = new URLSearchParams();
-    const categoryName = categories.find(c => c.id === categoryFilter)?.name.split('(')[0].trim() || '';
-    const queryParts = ['battery', categoryName, `created:>${getDateRange()}`].filter(Boolean);
-    
-    if (languageFilter) {
-      queryParts.push(`language:${languageFilter}`);
+    const params = new URLSearchParams()
+    params.append('since', since)
+    if (language) {
+      params.append('language', language)
     }
+    return `/api/trending?${params.toString()}`
+  }, [since, language])
 
-    params.append('q', queryParts.join(' '));
-    params.append('sort', 'stars');
-    params.append('order', 'desc');
-    params.append('per_page', '20');
-    return `/api/repositories?${params.toString()}`;
-  }, [timeRange, categoryFilter, languageFilter, categories]);
-
-  const { data: repoResponse, error: repoError, isLoading } = useSWR<ApiResponse<RepositoriesData>>(apiUrl, fetcher);
-
-  const filteredRepositories = repoResponse?.data?.repositories || [];
+  const { data, error, isLoading } = useSWR<ApiResponse<Repository[]>>(apiUrl, fetcher)
+  
+  const { data: languagesData } = useSWR<string[]>('/api/trending/languages', fetcher)
 
   const renderContent = () => {
     if (isLoading) {
       return [...Array(10)].map((_, i) => <TrendingListItemSkeleton key={i} />);
     }
 
-    if (repoError || !repoResponse?.success) {
+    if (error || !data?.success) {
       return (
         <div className="text-center py-10 col-span-full bg-red-50 dark:bg-red-900/20 rounded-lg">
           <ServerCrash className="mx-auto h-12 w-12 text-red-500" />
           <h3 className="mt-2 text-xl font-semibold text-red-700 dark:text-red-300">获取数据失败</h3>
           <p className="mt-1 text-red-500 dark:text-red-400">
-            {repoResponse?.message || '服务器开小差了，请稍后再试。'}
+            {data?.message || '服务器开小差了，请稍后再试。'}
           </p>
         </div>
       );
     }
 
-    if (filteredRepositories.length === 0) {
+    if (data?.data?.length === 0) {
       return (
         <div className="text-center py-20">
           <p className="text-lg text-gray-500 dark:text-gray-400">找不到相关项目，请尝试调整过滤器。</p>
@@ -129,7 +134,7 @@ export default function TrendingPage() {
       );
     }
     
-    return filteredRepositories.map((repo, index) => (
+    return data?.data?.map((repo, index) => (
       <motion.div
         key={repo.id}
         initial={{ opacity: 0, y: 20 }}
@@ -142,9 +147,9 @@ export default function TrendingPage() {
             <div className="flex items-center mb-2">
               <span className="text-xl font-bold text-blue-600 dark:text-blue-400 mr-4 w-10 text-center">#{index + 1}</span>
               <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                   {repo.full_name}
-                </Link>
+                </a>
               </h2>
             </div>
             <p className="ml-14 text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">
@@ -167,14 +172,13 @@ export default function TrendingPage() {
               )}
             </div>
           </div>
-          <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500 transition-colors">
+          <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500 transition-colors">
             <ExternalLink className="h-6 w-6" />
-          </Link>
+          </a>
         </div>
       </motion.div>
     ));
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900/50">
@@ -204,37 +208,25 @@ export default function TrendingPage() {
                 筛选条件:
             </div>
             <div className="flex items-center gap-4 flex-wrap">
-                <select 
-                    value={timeRange}
-                    onChange={(e) => setTimeRange(e.target.value)}
-                    className="bg-gray-100 dark:bg-gray-700 border-none rounded-md px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500"
-                >
-                    {timeRanges.map(range => (
-                        <option key={range.value} value={range.value}>{range.label}</option>
-                    ))}
-                </select>
-                <select 
-                    value={languageFilter}
-                    onChange={(e) => setLanguageFilter(e.target.value)}
-                    className="bg-gray-100 dark:bg-gray-700 border-none rounded-md px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500"
-                    disabled={!statsData || statsError}
-                >
+                <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+                  <TimeRangeButton range="daily" currentRange={since} setRange={handleTimeRangeChange} />
+                  <TimeRangeButton range="weekly" currentRange={since} setRange={handleTimeRangeChange} />
+                  <TimeRangeButton range="monthly" currentRange={since} setRange={handleTimeRangeChange} />
+                </div>
+                
+                <div className="relative w-full md:w-64 appearance-none rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200">
+                  <select
+                    value={language}
+                    onChange={handleLanguageChange}
+                    className="w-full md:w-64 appearance-none rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                  >
                     <option value="">所有语言</option>
-                    {languages.map(lang => (
-                        <option key={lang} value={lang}>{lang}</option>
+                    {languagesData?.map(lang => (
+                      <option key={lang} value={lang}>{lang}</option>
                     ))}
-                </select>
-                <select 
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="bg-gray-100 dark:bg-gray-700 border-none rounded-md px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500"
-                    disabled={!statsData || statsError}
-                >
-                    <option value="">所有分类</option>
-                    {categories.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
-                </select>
+                  </select>
+                  <Github className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                </div>
             </div>
         </motion.div>
         
@@ -244,4 +236,12 @@ export default function TrendingPage() {
       </div>
     </div>
   )
+}
+
+export default function TrendingPage() {
+  return (
+    <Suspense fallback={<Loader2 className="h-12 w-12 animate-spin mx-auto" />}>
+      <TrendingPageContent />
+    </Suspense>
+  );
 } 

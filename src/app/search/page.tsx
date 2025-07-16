@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, Suspense, useMemo } from 'react'
-import { useSearchParams } from 'next/navigation'
+import React, { useState, useEffect, Suspense, useMemo, useCallback } from 'react'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { Search, Filter, SortAsc, SortDesc, Loader2, ServerCrash } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useSWR from 'swr'
@@ -30,18 +30,36 @@ interface RepositoriesData {
 
 
 function SearchPageContent() {
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
-  const initialQuery = searchParams.get('q') || ''
   
-  const [query, setQuery] = useState(initialQuery)
-  const [page, setPage] = useState(1)
-  const [filters, setFilters] = useState({
-    category: searchParams.get('category') || '',
-    language: searchParams.get('language') || '',
-    minStars: '',
-    hasLicense: '',
-  });
-  const [sort, setSort] = useState({ sortBy: 'stars', sortOrder: 'desc' })
+  // Create a new URLSearchParams object from the current searchParams
+  const createQueryString = useCallback(
+    (params: Record<string, string | number | null>) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+      for (const [key, value] of Object.entries(params)) {
+        if (value === null || value === '') {
+          newSearchParams.delete(key)
+        } else {
+          newSearchParams.set(key, String(value))
+        }
+      }
+      return newSearchParams.toString()
+    },
+    [searchParams]
+  )
+
+  const query = searchParams.get('q') || ''
+  const page = Number(searchParams.get('page')) || 1
+  const category = searchParams.get('category') || ''
+  const language = searchParams.get('language') || ''
+  const minStars = searchParams.get('minStars') || ''
+  const sortBy = searchParams.get('sort') || 'stars'
+  const sortOrder = searchParams.get('order') || 'desc'
+  
+  const filters = { category, language, minStars, hasLicense: '' }
+  const sort = { sortBy, sortOrder }
 
   // Fetch dynamic filter options (languages, categories)
   const { data: statsData, error: statsError } = useSWR<ApiResponse<StatsData>>('/api/stats', fetcher);
@@ -51,49 +69,34 @@ function SearchPageContent() {
     uniqueCategories: statsData?.data?.uniqueCategories || [],
     uniqueLanguages: statsData?.data?.uniqueLanguages || [],
   }), [statsData]);
+  
+  const handleFilterChange = (key: string, value: string) => {
+    router.push(`${pathname}?${createQueryString({ [key]: value, page: 1 })}`, { scroll: false })
+  }
+
+  const handleSortChange = (newSortBy: string, newSortOrder: string) => {
+    router.push(`${pathname}?${createQueryString({ sort: newSortBy, order: newSortOrder, page: 1 })}`, { scroll: false })
+  }
+  
+  const handlePageChange = (newPage: number) => {
+    router.push(`${pathname}?${createQueryString({ page: newPage })}`, { scroll: false })
+  }
 
   const apiUrl = useMemo(() => {
-    const params = new URLSearchParams()
-    
-    // Build query: combine main query and category filter for GitHub API
-    let combinedQuery = query;
-    if (filters.category) {
-      // Find the category name from the ID for a better search experience
-      const categoryName = uniqueCategories.find(c => c.id === filters.category)?.name.split('(')[0].trim();
-      combinedQuery = `${categoryName || filters.category} ${query}`.trim();
-    }
-    
-    if (combinedQuery) params.append('q', combinedQuery)
-    if (filters.language) params.append('language', `language:${filters.language}`) // Correct syntax for GitHub API
-    if (filters.minStars) params.append('stars', `>${filters.minStars}`)
-    
-    params.append('sort', sort.sortBy)
-    params.append('order', sort.sortOrder)
-    params.append('page', page.toString())
-    params.append('per_page', '12') // Show 12 results per page
-    return `/api/repositories?${params.toString()}`
-  }, [query, filters, sort, page, uniqueCategories])
+    return `/api/repositories?${searchParams.toString()}`
+  }, [searchParams])
 
   const { data: apiResponse, error: searchError, isLoading } = useSWR<ApiResponse<RepositoriesData>>(apiUrl, fetcher, {
     keepPreviousData: true,
   })
 
   useEffect(() => {
-    setQuery(initialQuery)
-  }, [initialQuery])
+    // This effect is no longer needed as query is derived from searchParams
+    // setQuery(initialQuery) 
+  }, [searchParams])
 
-  const handleFilterChange = (key: string, value: string) => {
-    setPage(1) // Reset to first page on filter change
-    setFilters(prev => ({ ...prev, [key]: value }))
-  }
-
-  const handleSortChange = (sortBy: string, sortOrder: string) => {
-    setPage(1) // Reset to first page on sort change
-    setSort({ sortBy, sortOrder })
-  }
-  
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading && !apiResponse) { // Show initial loading state
       return (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
@@ -151,7 +154,7 @@ function SearchPageContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4 sm:mb-0">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-4 sm:mb-0">
             {query ? `“${query}”的搜索结果` : '浏览全部项目'}
           </h1>
           <SortControl sort={sort} onSortChange={handleSortChange} />
@@ -176,7 +179,7 @@ function SearchPageContent() {
             <Pagination 
               currentPage={page}
               totalPages={apiResponse.data?.totalPages || 1}
-              onPageChange={setPage}
+              onPageChange={handlePageChange}
             />
           </motion.div>
         )}
