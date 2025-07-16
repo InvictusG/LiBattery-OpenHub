@@ -27,7 +27,7 @@ const getStats = cache(
       const totalForks = repositories.reduce((acc, repo) => acc + repo.forks_count, 0);
 
       const languages = repositories.map(repo => repo.language).filter(Boolean);
-      const uniqueLanguages = [...new Set(languages)];
+      const uniqueLanguages = Array.from(new Set(languages));
 
       // Fetch categories from our own API (assuming it's available)
       // Note: This creates a dependency, ensure the categories API is robust.
