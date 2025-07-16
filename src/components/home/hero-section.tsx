@@ -13,6 +13,7 @@ import type { ApiResponse } from '@/types';
 interface StatsData {
   totalProjects: number;
   totalStars: number;
+  totalForks: number;
   uniqueLanguages: string[];
 }
 
@@ -161,8 +162,7 @@ function HeroStats() {
                     </span>
                     <span className="flex items-center gap-1.5">
                         <GitFork className="h-4 w-4" />
-                        {/* Note: Total forks is not available from stats API, using a placeholder */}
-                        500K+ 总Fork数
+                        {formatNumber(stats.totalForks)} 总Fork数
                     </span>
                     <span className="flex items-center gap-1.5">
                         <FileText className="h-4 w-4" /> 

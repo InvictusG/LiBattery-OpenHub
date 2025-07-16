@@ -1,86 +1,68 @@
 import { NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
-import { categories } from '@/lib/categories';
-import { ApiResponse } from '@/types';
+import { unstable_cache as cache } from 'next/cache';
 
-// Initialize Octokit
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-export async function GET() {
-  try {
-    // 1. Get total project count
-    const totalProjectsResponse = await octokit.search.repos({
-      q: 'battery in:name,description,topics',
-      per_page: 1, // We only need the total count
-    });
-    const totalProjects = totalProjectsResponse.data.total_count;
+// Cache the function for 6 hours
+const getStats = cache(
+  async () => {
+    try {
+      // Fetch a curated list of highly-starred battery-related repositories
+      const { data: searchResult } = await octokit.search.repos({
+        q: 'battery in:description,readme,name sort:stars',
+        per_page: 100, // Fetch top 100 to get a good sample size
+      });
 
-    // 2. Get repos to calculate unique languages and categories
-    const reposForStatsResponse = await octokit.search.repos({
-      q: 'battery in:name,description,topics',
-      sort: 'stars',
-      order: 'desc',
-      per_page: 100, // Fetch top 100 to get a good sample for stats
-    });
-    const repos = reposForStatsResponse.data.items;
+      const repositories = searchResult.items;
 
-    // 3. Calculate unique languages
-    const languages = new Set<string>();
-    repos.forEach(repo => {
-      if (repo.language) {
-        languages.add(repo.language);
+      if (!repositories || repositories.length === 0) {
+        throw new Error("No repositories found to calculate stats.");
       }
-    });
-    const uniqueLanguages = Array.from(languages).sort();
 
-    // 4. Populate unique categories from our predefined list
-    const categoryCountMap: { [key: string]: number } = {};
-    categories.forEach(cat => categoryCountMap[cat.id] = 0);
-    
-    repos.forEach(repo => {
-        const repoTopics = repo.topics || [];
-        for (const category of categories) {
-            // Check if any of the category id is in the repo topics
-            // e.g. category id 'bms' is in topics ['bms', 'battery']
-            if (repoTopics.includes(category.id)) {
-                categoryCountMap[category.id]++;
-                // a repo can belong to multiple categories, so don't break
-            }
-        }
-    });
+      const totalProjects = searchResult.total_count;
+      const totalStars = repositories.reduce((acc, repo) => acc + repo.stargazers_count, 0);
+      const totalForks = repositories.reduce((acc, repo) => acc + repo.forks_count, 0);
 
-    const uniqueCategories = categories.map(cat => ({
-        ...cat,
-        repositories: categoryCountMap[cat.id] || 0,
-    })).filter(cat => cat.id !== 'other'); // Exclude 'other' from filters, but it can be used for categorization
+      const languages = repositories.map(repo => repo.language).filter(Boolean);
+      const uniqueLanguages = [...new Set(languages)];
 
-    // 5. Calculate total stars from the fetched repos (as an approximation)
-    const totalStars = repos.reduce((acc, repo) => acc + repo.stargazers_count, 0);
+      // Fetch categories from our own API (assuming it's available)
+      // Note: This creates a dependency, ensure the categories API is robust.
+      // For now, we hardcode to avoid circular dependency issues during build.
+      const uniqueCategories = [
+        { id: "bms", name: "电池管理系统 (BMS)" },
+        { id: "simulation", name: "仿真与模拟" },
+        { id: "diagnostics", name: "诊断与寿命预测" },
+        { id: "data", name: "数据集与分析" },
+        { id: "thermal", name: "热管理" },
+        { id: "hardware", name: "开源硬件" },
+      ];
 
-    const response: ApiResponse<{
-      totalProjects: number;
-      totalStars: number;
-      uniqueLanguages: string[];
-      uniqueCategories: typeof uniqueCategories;
-    }> = {
-      success: true,
-      data: {
+      return {
         totalProjects,
         totalStars,
+        totalForks,
         uniqueLanguages,
         uniqueCategories,
-      },
-    };
+      };
+    } catch (error) {
+      console.error('Error fetching GitHub stats:', error);
+      throw new Error('Failed to fetch stats from GitHub.');
+    }
+  },
+  ['github-stats'],
+  { revalidate: 21600 } // Revalidate every 6 hours
+);
 
-    return NextResponse.json(response);
 
+export async function GET() {
+  try {
+    const stats = await getStats();
+    return NextResponse.json({ success: true, data: stats });
   } catch (error: any) {
-    console.error('API Stats Error:', error);
-    return NextResponse.json({
-      success: false,
-      message: `An internal server error occurred: ${error.message}`,
-    }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 } 
