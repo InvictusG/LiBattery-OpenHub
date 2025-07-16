@@ -117,7 +117,7 @@ export default function ContributePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">分享您的开源项目</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-slate-50">分享您的开源项目</h1>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">发现了一个优秀的锂电池开源项目？与社区分享，让更多人受益。</p>
         </motion.div>
 

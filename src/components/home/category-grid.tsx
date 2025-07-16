@@ -67,13 +67,13 @@ export function CategoryGrid() {
     visible: { transition: { staggerChildren: 0.1 } },
   };
   return (
-    <section className="py-24 sm:py-32">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto mb-16 max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-            Explore by Technical Category
+    <section className="py-20 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
+            按类别浏览
           </h2>
-          <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
+          <p className="mt-4 text-lg leading-8 text-slate-600 dark:text-slate-400">
             From Battery Management Systems to materials science, find projects in your specific area of interest.
           </p>
         </div>

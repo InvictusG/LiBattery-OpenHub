@@ -189,7 +189,7 @@ function TrendingPageContent() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-slate-50">
             热门项目
           </h1>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">

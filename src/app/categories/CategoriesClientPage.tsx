@@ -61,10 +61,10 @@ export default function CategoriesClientPage() {
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-          按分类浏览
+        <h1 className="text-4xl font-bold text-slate-900 dark:text-white sm:text-5xl">
+          探索所有技术分类
         </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400">
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
           深入探索电池技术的特定领域。每个分类都汇集了相关的开源项目，方便您的研究。
         </p>
       </motion.header>

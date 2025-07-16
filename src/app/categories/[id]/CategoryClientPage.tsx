@@ -79,7 +79,7 @@ export default function CategoryClientPage({ category }: CategoryClientPageProps
             <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">{category.name}</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">{category.name}</h1>
             <p className="mt-1 text-slate-500 dark:text-slate-400">{category.description}</p>
           </div>
         </div>

@@ -76,7 +76,7 @@ export function HeroSection() {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center"
         >
-          <motion.h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl dark:text-white">
+          <motion.h1 className="text-4xl font-bold text-slate-900 sm:text-5xl md:text-6xl dark:text-white">
             寻找最优秀的<span className="text-blue-600">开源</span>电池项目
           </motion.h1>
 
@@ -87,14 +87,13 @@ export function HeroSection() {
           <div ref={searchRef} className="relative mt-8 w-full max-w-2xl">
             <form onSubmit={handleSearch}>
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setIsFocused(true)}
                   placeholder="搜索项目、主题或技术..."
-                  className="w-full rounded-full border border-slate-300 bg-white/50 py-4 pl-12 pr-6 text-lg shadow-lg backdrop-blur-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900/50 dark:text-white dark:focus:border-blue-500"
+                  className="w-full rounded-full border border-slate-300 bg-white/50 py-4 pl-6 pr-6 text-lg shadow-lg backdrop-blur-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900/50 dark:text-white dark:focus:border-blue-500"
                 />
                  {isLoading && <Loader2 className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-slate-400" />}
               </div>
